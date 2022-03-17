@@ -1,3 +1,13 @@
+/*
+Cálculo realizado:
+
+- Sistema calcula o TOTAL de LUCRATIVIDADE (VENDA - CUSTO)
+- Em seguida, calcula 80% deste valor
+- Obtem a quantidade de itens equivalente aos 80%
+- Obtem 20% do total de itens sendo estes os maiores valores/lucros.
+
+*/
+
 ALTER SESSION SET current_schema = CONSINCO;
 
 SELECT * FROM (
