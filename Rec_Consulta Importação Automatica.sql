@@ -3,8 +3,8 @@ ALTER SESSION SET current_schema = CONSINCO;
 SELECT DISTINCT B.NROCARGARECEB NRO_CARGA, 
        DECODE (nvl(B.seqatividadeusuario, 0), 0, 'GUIA CEGA', 'RF') AS TIPO_CONFERENCIA, 
        /*C.NUMERONF*/ A.DESCRICAO Descricao_Carga,  A.NROEMPRESA NRO_LOJA, A.DTAHORGERACAO DATA_GERACAO, A.USUGERACAO,
-       DECODE (A.STATUSCARGA, 'G', 'Gerada',      'O', 'Conferência', 'L', 'Liberada',     'D', 'Conferência',      
-                              'F', 'Finalizada',  'C', 'Cancelada',   'R', 'Conferência RF',    'Outros') AS STATUS                                                                                                                                                                                                                                                                                                                                                                              
+       DECODE (A.STATUSCARGA, 'G', 'Gerada',      'O', 'ConferÃªncia', 'L', 'Liberada',     'D', 'ConferÃªncia',      
+                              'F', 'Finalizada',  'C', 'Cancelada',   'R', 'ConferÃªncia RF',    'Outros') AS STATUS                                                                                                                                                                                                                                                                                                                                                                              
 FROM   MAD_CARGARECEB A, MAD_CARGARECITEM B, MAD_CARGARECEBNF C
 WHERE  DTAHORGERACAO BETWEEN :DT1 AND :DT2
   AND  A.NROCARGARECEB = B.NROCARGARECEB
@@ -15,11 +15,11 @@ WHERE  DTAHORGERACAO BETWEEN :DT1 AND :DT2
   AND  A.STATUSCARGA =
        CASE 
          WHEN :LS2 = 'Gerada'         THEN 'G'
-         WHEN :LS2 = 'Conferência'    THEN 'O'
+         WHEN :LS2 = 'ConferÃªncia'    THEN 'O'
          WHEN :LS2 = 'Liberada'       THEN 'L'
          WHEN :LS2 = 'Finalizada'     THEN 'F'
          WHEN :LS2 = 'Cancelada'      THEN 'C'
-         WHEN :LS2 = 'Conferência RF'  THEN 'R'
+         WHEN :LS2 = 'ConferÃªncia RF'  THEN 'R'
            ELSE A.STATUSCARGA
            END
  AND A.NROEMPRESA = 
