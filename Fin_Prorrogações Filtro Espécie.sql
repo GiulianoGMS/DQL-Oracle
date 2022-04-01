@@ -17,7 +17,7 @@ CASE WHEN FC5F_DATAUTIL(b.dtavencimento,NULL,NULL,0,'P',NULL) = a.dtaprogramada 
 FROM fi_titulo a LEFT JOIN mrl_titulofin b ON (a.seqtitulo = b.seqintegracao AND a.nroempresa = b.nroempresa)
                  INNER JOIN ge_pessoa c ON (a.seqpessoa = c.seqpessoa)
 WHERE a.obrigdireito = 'O'
-AND a.codespecie IN (#LS@)   -- Alteração Chamado 33726 - Andressa
+AND a.codespecie IN (#LS@)   -- AlteraÃ§Ã£o Chamado 33726 - Andressa
 AND  a.situacao != 'C'
 AND a.abertoquitado = 'A'
 AND a.codespecie not in ('DUPPIM','BONIAC')
@@ -51,7 +51,7 @@ select null,
 from fi_titulo a left join mrl_titulofin b on (a.seqtitulo = b.seqintegracao and a.nroempresa = b.nroempresa)
                  inner join ge_pessoa c on (a.seqpessoa = c.seqpessoa)
 where a.obrigdireito = 'O'
-AND a.codespecie IN (#LS@)   -- Alteração Chamado 33726 - Andressa
+AND a.codespecie IN (#LS@)   -- AlteraÃ§Ã£o Chamado 33726 - Andressa
 and  a.situacao != 'C'
 and a.abertoquitado = 'A'
 and a.codespecie not in ('DUPPIM','BONIAC')
