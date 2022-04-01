@@ -1,13 +1,13 @@
 CREATE OR REPLACE VIEW consinco.nagv_pessoaitworks AS (
 
-select   /*LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) CNPJCPF,*/ -- -Ticket 17469 Solicitação Sirlene
+select   /*LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) CNPJCPF,*/ -- -Ticket 17469 SolicitaÃ§Ã£o Sirlene
            CASE WHEN GE.FISICAJURIDICA = 'F' THEN ge.nrocgccpf||LPAD(GE.DIGCGCCPF,2,0) 
-             ELSE LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) END CNPJCPF, -- Ticket 28250 Solicitação Sirlene
+             ELSE LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) END CNPJCPF, -- Ticket 28250 SolicitaÃ§Ã£o Sirlene
            GE.NOMERAZAO RAZAO_SOCIAL,
            GE.LOGRADOURO ENDERECO,
            GE.NROLOGRADOURO NUMERO,
            GE.BAIRRO BAIRRO,
-           case when ge.fisicajuridica = 'F' then null else GE.INSCRICAORG end IE_RG, --- Ticket 26437 Alteração 15/03/2022 Cipolla
+           case when ge.fisicajuridica = 'F' then null else GE.INSCRICAORG end IE_RG, --- Ticket 26437 AlteraÃ§Ã£o 15/03/2022 Cipolla
            GE.CMPLTOLOGRADOURO COMPLEMENTO,
            GE.FONEDDD1|| GE.FONENRO1 DDD_FONE,
            GE.CIDADE CIDADE,
