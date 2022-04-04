@@ -1,0 +1,1 @@
+TO_CHAR([Coluna], 'FM999G999G999D90', 'nls_numeric_characters='',.''') [Nome_Coluna]
