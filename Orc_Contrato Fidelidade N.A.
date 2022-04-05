@@ -1,0 +1,25 @@
+ALTER SESSION SET current_schema = CONSINCO; 
+
+-- Contrato
+
+SELECT * FROM MGC_CONTRATO 
+WHERE SEQREDE = 1061
+
+-- Log Alterações Contrato
+
+SELECT USUALTERACAO, DTAALTERACAO, A.* FROM CONSINCO.MGC_CONTRATOLOG A
+WHERE SEQCONTRATO = 459
+ORDER BY 2 DESC
+
+-- Log Alterações por Categoria
+
+SELECT * FROM CONSINCO.MGC_CONTRATOCATEGORIALOG
+WHERE SEQCATEGORIA = 41141
+ORDER BY 2 DESC 
+
+-- Log Alterações NF
+
+select x.*
+from consinco.mlf_auxnfitem_log x
+where x.seqauxnotafiscal = 3567618
+ORDER BY DTHRALTERACAO DESC
