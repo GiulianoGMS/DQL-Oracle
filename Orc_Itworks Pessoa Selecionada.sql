@@ -3,7 +3,7 @@ create or replace view consinco.nagv_pessoaitworks as
 
 select   --LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) CNPJCPF -- -Ticket 17469 Solicitação Sirlene
          --CASE WHEN GE.FISICAJURIDICA = 'F' THEN ge.nrocgccpf||LPAD(GE.DIGCGCCPF,2,0) ELSE LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) END CNPJCPF, -- Ticket 28250 Solicitação Sirlene
-           CASE WHEN GE.FISICAJURIDICA = 'F' THEN LPAD(GE.NROCGCCPF,9,0)||LPAD(GE.DIGCGCCPF,2,0) ELSE LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) END CNPJCPF, -- Ticket 49294 Solic. Silene 11/05/22
+           CASE WHEN GE.FISICAJURIDICA = 'F' THEN LPAD(GE.NROCGCCPF,9,0)||LPAD(GE.DIGCGCCPF,2,0) ELSE LPAD(GE.NROCGCCPF,12,0)||LPAD(GE.DIGCGCCPF,2,0) END CNPJCPF, -- Ticket 49294 Solic. Silene 11/05/22
            GE.NOMERAZAO RAZAO_SOCIAL,
            GE.LOGRADOURO ENDERECO,
            GE.NROLOGRADOURO NUMERO,
