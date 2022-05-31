@@ -1,0 +1,8 @@
+SELECT CODGERALOPER CGO, DESCRICAO,
+
+DECODE(TIPUSO,'R','Recebimento','E','Emissão NF','I','Operação Interna') TIPO_DE_USO,  
+DECODE(TIPCGO, 'E','Entrada','S','Saida') TIPO, DECODE(STATUS, 'A','Ativo','I','Inativo')STATUS 
+
+FROM CONSINCO.MAX_CODGERALOPER A 
+
+ORDER BY 1 ASC
