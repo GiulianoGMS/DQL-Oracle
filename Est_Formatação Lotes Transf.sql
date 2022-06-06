@@ -1,6 +1,5 @@
-ALTER SESSION SET current_schema = CONSINCO;
-
-SELECT CODPOS LOJA_OCORRENCIA  FROM ( 
+SELECT translate(CODPOS,' .-', ' ')  LOJA_OCORRENCIA
+FROM ( 
 SELECT '0000000'||LPAD(PC.CODACESSO,13,0)||REPLACE(LPAD(((((SELECT COALESCE(SUM(cc.qtdcontagem3 * cc.qtdembalagem),
                           sum(cc.qtdcontagem2 * cc.qtdembalagem),
                           sum(cc.qtdcontagem1 * cc.qtdembalagem),
@@ -39,7 +38,7 @@ SELECT '0000000'||LPAD(PC.CODACESSO,13,0)||REPLACE(LPAD(((((SELECT COALESCE(SUM(
        CONSINCO.MAP_PRODCODIGO PCC WHERE PCC.QTDEMBALAGEM = 1 AND PCC.TIPCODIGO IN ('E', 'B')) PC ON B.SEQPRODUTO = PC.SEQPRODUTO AND PC.ODR = 1
        
  
- WHERE MRLV_INVRELDIVERG.NROEMPRESA = 1
+ WHERE MRLV_INVRELDIVERG.NROEMPRESA = 42
    AND MRLV_INVRELDIVERG.SEQPRODUTO = B.SEQPRODUTO
    AND MRLV_INVRELDIVERG.STATUS != 'C'
 
@@ -54,6 +53,7 @@ SELECT '0000000'||LPAD(PC.CODACESSO,13,0)||REPLACE(LPAD(((((SELECT COALESCE(SUM(
                                          MRLV_INVRELDIVERG.NROEMPRESA,
                                          MRLV_INVRELDIVERG.PADRAOEMBVENDA),
                   MRLV_INVRELDIVERG.PADRAOEMBVENDA))
+                  
    AND ((NVL((((select coalesce(sum(cc.qtdcontagem3 * cc.qtdembalagem),
                                 sum(cc.qtdcontagem2 * cc.qtdembalagem),
                                 sum(cc.qtdcontagem1 * cc.qtdembalagem),
@@ -100,8 +100,8 @@ SELECT '0000000'||LPAD(PC.CODACESSO,13,0)||REPLACE(LPAD(((((SELECT COALESCE(SUM(
                   not
                    exists((select number1 from CONSINCO.gex_dadostemporarios)))) /
        MRLV_INVRELDIVERG.QTDEMBALAGEM) = 0))
-   AND MRLV_INVRELDIVERG.SEQINVLOTE = 429
+   AND MRLV_INVRELDIVERG.SEQINVLOTE = 541
    AND MRLV_INVRELDIVERG.NIVELHIERARQUIA = 1
-Order By NULL, MRLV_INVRELDIVERG.DESCCOMPLETA )
+Order By NULL, MRLV_INVRELDIVERG.DESCCOMPLETA ) 
  
 WHERE DIVERG < 0;
