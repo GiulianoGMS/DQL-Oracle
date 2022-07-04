@@ -1,2 +1,2 @@
-TO_CHAR([Coluna], 'FM999G999G999D90', 'nls_numeric_characters='',.''') [Nome_Coluna]
+TO_CHAR([Coluna], 'FM999G999G999D90', 'NLS_NUMERIC_CHARACTERS='',.''') [Nome_Coluna]
 -- Exemplo: 17.451,98
