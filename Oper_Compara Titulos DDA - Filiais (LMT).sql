@@ -1,3 +1,5 @@
+-- Quantidade de caracteres reduzidos devido ao limite no Query Admin
+
 SELECT *
 FROM (
 
