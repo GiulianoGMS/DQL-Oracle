@@ -40,6 +40,7 @@ WHERE A.OBRIGDIREITO = 'O'
                             AND FI_ESPECIE.OBRIGDIREITO = 'O'
                             AND ( FI_ESPECIE.TIPOESPECIE = 'T' Or FI_ESPECIE.TIPOESPECIE = 'C' )
                             AND FI_ESPECIE.CODESPECIE NOT IN ('BEFUNC','VLDESC','MKFUNC','MKPREM','RESCIS','FÉRIAS','PENSAO','PROCIM','PROTIM','PROTRA'))
+  AND A.CODESPECIE LIKE (CASE WHEN (:LS3) IS NULL THEN '%%' ELSE :LS3 END)
                                     
   AND A.NROEMPRESAMAE IN (  SELECT  DISTINCT A.NROEMPRESAMAE 
     FROM   CONSINCO.FI_PARAMETRO A 
@@ -60,4 +61,4 @@ WHERE A.OBRIGDIREITO = 'O'
 ORDER BY 6 ASC, DTAPROGRAMADA , STATUS_TITULO, A.NOMERAZAO) X
 
 WHERE X.STATUS_TITULO LIKE (DECODE(:LS1, 'Não Programados', '%Não Programado%', 'Cancelados','%Cancelado%', '%%'))
-  AND CODBARRAS       LIKE (DECODE(:LS2,'Com Código de Barras','Sim', 'Sem Código de Barras','Não','%%'))
+  AND CODBARRAS       LIKE (DECODE(:LS2, 'Com Código de Barras','Sim', 'Sem Código de Barras','Não','%%'))
