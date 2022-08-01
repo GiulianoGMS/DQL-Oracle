@@ -1,6 +1,9 @@
-ALTER SESSION SET current_schema = CONSINCO;
+SELECT LOJA, PERIODO, CGO, DESCRICAO, VALOR, O4, CASE WHEN O4 IS NOT NULL THEN NULL ELSE ROWNUM END O5, 
+       TO_CHAR(NOTAS_EMITIDAS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') NOTAS_EMITIDAS, 
+       TO_CHAR(OPERACOES_INTERNAS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') OP_INT, 
+       TO_CHAR(DIFERENCA, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') DIFERENCA, DT1
 
-CREATE OR REPLACE VIEW NAGV_OPERACOESINTERNASQRP AS
+FROM (
 
 SELECT CASE WHEN LOJA IS NULL THEN 'LOJA' ELSE TO_CHAR(LOJA) END LOJA, 
        CASE WHEN DATA_INICIO IS NULL AND LOJA IS NULL THEN 'PERIODO' ELSE
@@ -9,48 +12,55 @@ SELECT CASE WHEN LOJA IS NULL THEN 'LOJA' ELSE TO_CHAR(LOJA) END LOJA,
        CASE WHEN CGO IS NULL THEN 'CGO' ELSE TO_CHAR(CGO) END CGO, 
        CASE WHEN DESCRICAO IS NULL THEN 'DESCRICAO' ELSE DESCRICAO END DESCRICAO, 
        CASE WHEN VALOR IS NULL THEN 'VALOR' ELSE TO_CHAR(VALOR,'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') END VALOR,
-      (Select round(sum (x.vlroperacao),2) VALOR
+      /*(Select round(sum (x.vlroperacao),2) VALOR
         from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
         where x.codgeraloper in (806)
-        and x.nroempresa IN (10)
-        AND DTAOPERACAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30'
+        and x.nroempresa IN (#LS1)
+        AND EXTRACT (MONTH FROM DTAOPERACAO) = 7
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = 2022
         group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')) CONSUMO_SP,
       (Select round(sum (x.vlroperacao),2) VALOR
         from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
         where x.codgeraloper in (807)
-        and x.nroempresa IN (10)
-        AND DTAOPERACAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30'
-        group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')) PERDA_DET_SP,
-      (select round(sum (x.vlroperacao),2) VALOR
+        and x.nroempresa IN (#LS1)
+        AND EXTRACT (MONTH FROM DTAOPERACAO) = 7
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = 2022
+        group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')) PERDA_DET_SP,*/
+        CASE WHEN DATA_INICIO IS NOT NULL AND CGO < 800 THEN TO_CHAR(DATA_INICIO, 'DD/MM/YY')||' até '||TO_CHAR(DATA_FIM, 'DD/MM/YY') END DT1, NULL,
+        (select round(sum (x.vlroperacao),2) VALOR
         from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
         where x.codgeraloper in (806,807)
-        and x.nroempresa IN (10)
-        AND DTAOPERACAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30') NOTAS_EMITIDAS,
+        and x.nroempresa IN (#LS1)
+        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2) NOTAS_EMITIDAS,
       (select round(sum(x.valorlanctobrt *x.qtdlancto),2) VALOR
         from fato_perda x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.nroempresa IN (10)
-        AND TO_CHAR(X.DTAOPERACAO, 'YYYY') = 2022
-        AND DTAOPERACAO BETWEEN DATE '2022-06-01' AND DATE '2022-06-30') OPERACOES_INTERNAS,
-      (SELECT ((select round(sum (x.vlroperacao),2) VALOR
+        where x.nroempresa IN (#LS1)
+        AND Y.CODGERALOPER NOT IN (49,269,270,271,272,273,274)
+        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2) OPERACOES_INTERNAS,
+      (SELECT ((select round(sum(x.valorlanctobrt *x.qtdlancto),2) VALOR
+        from fato_perda x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
+        where x.nroempresa IN (#LS1)
+        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
+        AND Y.CODGERALOPER NOT IN (49,269,270,271,272,273,274)) - (select round(sum (x.vlroperacao),2) VALOR
         from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
         where x.codgeraloper in (806,807)
-        and x.nroempresa IN (10)
-        AND DTAOPERACAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30'
-        ) -
-        (select round(sum(x.valorlanctobrt *x.qtdlancto),2) VALOR
-        from fato_perda x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.nroempresa IN (10)
-        AND DTAOPERACAO BETWEEN DATE '2022-06-01' AND DATE '2022-06-30'
-        AND Y.CODGERALOPER NOT IN (49,269,270,271,272,273,274)
-        )) VALOR FROM DUAL) DIFERENCA, O1, O2, O3, O4
+        and x.nroempresa IN (#LS1)
+        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
+        )
+        ) VALOR FROM DUAL) DIFERENCA, O1, O2, O3, O4
        
 FROM(
 
 select X.CODGERALOPER O1, '-' O2, '1' O3, NULL O4, x.nroempresa LOJA , TRUNC(X.DTAOPERACAO,'MM') DATA_INICIO,LAST_DAY(TRUNC(X.DTAOPERACAO,'MM')) DATA_FIM,
 x.codgeraloper CGO , y.descricao,   round(sum(x.valorlanctobrt *x.qtdlancto),2) VALOR
 from fato_perda x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-where X.nroempresa IN (10) 
-AND DTAOPERACAO BETWEEN DATE '2022-06-01' AND DATE '2022-06-30'
+where X.nroempresa IN (#LS1) 
+AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 
+        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
 AND Y.CODGERALOPER NOT IN (49,269,270,271,272,273,274)
 group by x.nroempresa  , x.codgeraloper  , y.descricao, TRUNC(X.DTAOPERACAO,'MM')
 
@@ -60,8 +70,9 @@ Select NULL, 'B' O2, '2' O3, NULL O4, x.nroempresa LOJA , TRUNC(X.DTAOPERACAO,'M
 x.codgeraloper CGO , y.descricao,  round(sum (x.vlroperacao),2) VALOR
 from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
 where x.codgeraloper in (806)
-and x.nroempresa IN (10)
-AND DTAOPERACAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30'
+and x.nroempresa IN (#LS1)
+AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
 group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')
 
 UNION ALL
@@ -70,21 +81,24 @@ Select NULL, 'D' O2,'4' O3, NULL O4, x.nroempresa LOJA , TRUNC(X.DTAOPERACAO,'MM
 x.codgeraloper CGO , y.descricao,  round(sum (x.vlroperacao),2) VALOR
 from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
 where x.codgeraloper in (807)
-and x.nroempresa IN (10)
-AND DTAOPERACAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30'
+and x.nroempresa IN (#LS1)
+AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
 group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')
 
 UNION ALL
 
 SELECT DISTINCT NULL, 'B'||F.NUMERODF O2,'3' O3, NULL O4, F.NROEMPRESA, NULL, F.DTAEMISSAO, F.CODGERALOPER, 'NRO NF: '||F.numerodf, F.vlrcontabil
-FROM MFLV_BASENF F WHERE F.NROEMPRESA = 10 AND F.CODGERALOPER = 806
-AND DTAEMISSAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30'
+FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER = 806
+AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2
 
 UNION ALL
 
 SELECT DISTINCT NULL, 'D'||F.NUMERODF O2, '5' O3, NULL O4, F.NROEMPRESA, NULL, F.DTAEMISSAO, F.CODGERALOPER, 'NRO NF: '||F.numerodf, F.vlrcontabil 
-FROM MFLV_BASENF F WHERE F.NROEMPRESA = 10 AND F.CODGERALOPER = 807
-AND DTAEMISSAO BETWEEN DATE '2022-07-01' AND DATE '2022-07-30' 
+FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER = 807
+AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2
 
 
 UNION ALL
@@ -97,4 +111,4 @@ SELECT NULL, 'C' O2, NULL, '2' O4, NULL, NULL, NULL, NULL, NULL, NULL FROM DUAL
 
 )
 
-order by 11,12;
+order by 11,12);
