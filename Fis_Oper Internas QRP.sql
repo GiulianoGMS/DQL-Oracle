@@ -1,7 +1,7 @@
 SELECT LOJA, PERIODO, CGO, DESCRICAO, VALOR, O4, CASE WHEN O4 IS NOT NULL THEN NULL ELSE ROWNUM END O5, 
        TO_CHAR(NOTAS_EMITIDAS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') NOTAS_EMITIDAS, 
        TO_CHAR(OPERACOES_INTERNAS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') OP_INT, 
-       TO_CHAR(DIFERENCA, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') DIFERENCA, DT1
+       TO_CHAR(OPERACOES_INTERNAS - NOTAS_EMITIDAS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') DIFERENCA, DT1
 
 FROM (
 
@@ -12,21 +12,7 @@ SELECT CASE WHEN LOJA IS NULL THEN 'LOJA' ELSE TO_CHAR(LOJA) END LOJA,
        CASE WHEN CGO IS NULL THEN 'CGO' ELSE TO_CHAR(CGO) END CGO, 
        CASE WHEN DESCRICAO IS NULL THEN 'DESCRICAO' ELSE DESCRICAO END DESCRICAO, 
        CASE WHEN VALOR IS NULL THEN 'VALOR' ELSE TO_CHAR(VALOR,'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') END VALOR,
-      /*(Select round(sum (x.vlroperacao),2) VALOR
-        from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.codgeraloper in (806)
-        and x.nroempresa IN (#LS1)
-        AND EXTRACT (MONTH FROM DTAOPERACAO) = 7
-        AND EXTRACT (YEAR FROM DTAOPERACAO) = 2022
-        group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')) CONSUMO_SP,
-      (Select round(sum (x.vlroperacao),2) VALOR
-        from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.codgeraloper in (807)
-        and x.nroempresa IN (#LS1)
-        AND EXTRACT (MONTH FROM DTAOPERACAO) = 7
-        AND EXTRACT (YEAR FROM DTAOPERACAO) = 2022
-        group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')) PERDA_DET_SP,*/
-        CASE WHEN DATA_INICIO IS NOT NULL AND CGO < 800 THEN TO_CHAR(DATA_INICIO, 'DD/MM/YY')||' até '||TO_CHAR(DATA_FIM, 'DD/MM/YY') END DT1, NULL,
+       CASE WHEN DATA_INICIO IS NOT NULL AND CGO < 800 THEN TO_CHAR(DATA_INICIO, 'DD/MM/YY')||' até '||TO_CHAR(DATA_FIM, 'DD/MM/YY') END DT1, NULL,
         (select round(sum (x.vlroperacao),2) VALOR
         from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
         where x.codgeraloper in (806,807)
@@ -39,19 +25,7 @@ SELECT CASE WHEN LOJA IS NULL THEN 'LOJA' ELSE TO_CHAR(LOJA) END LOJA,
         AND Y.CODGERALOPER NOT IN (49,269,270,271,272,273,274)
         AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1
         AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2) OPERACOES_INTERNAS,
-      (SELECT ((select round(sum(x.valorlanctobrt *x.qtdlancto),2) VALOR
-        from fato_perda x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.nroempresa IN (#LS1)
-        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1
-        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
-        AND Y.CODGERALOPER NOT IN (49,269,270,271,272,273,274)) - (select round(sum (x.vlroperacao),2) VALOR
-        from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.codgeraloper in (806,807)
-        and x.nroempresa IN (#LS1)
-        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
-        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
-        )
-        ) VALOR FROM DUAL) DIFERENCA, O1, O2, O3, O4
+        NULL, O1, O2, O3, O4
        
 FROM(
 
@@ -89,14 +63,14 @@ group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')
 UNION ALL
 
 SELECT DISTINCT NULL, 'B'||F.NUMERODF O2,'3' O3, NULL O4, F.NROEMPRESA, NULL, F.DTAEMISSAO, F.CODGERALOPER, 'NRO NF: '||F.numerodf, F.vlrcontabil
-FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER = 806
+FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER = 806 AND F.STATUSDF != 'C'
 AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
 AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2
 
 UNION ALL
 
 SELECT DISTINCT NULL, 'D'||F.NUMERODF O2, '5' O3, NULL O4, F.NROEMPRESA, NULL, F.DTAEMISSAO, F.CODGERALOPER, 'NRO NF: '||F.numerodf, F.vlrcontabil 
-FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER = 807
+FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER = 807 AND F.STATUSDF != 'C'
 AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
 AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2
 
