@@ -13,12 +13,10 @@ SELECT CASE WHEN LOJA IS NULL THEN 'LOJA' ELSE TO_CHAR(LOJA) END LOJA,
        CASE WHEN DESCRICAO IS NULL THEN 'DESCRICAO' ELSE DESCRICAO END DESCRICAO, 
        CASE WHEN VALOR IS NULL THEN 'VALOR' ELSE TO_CHAR(VALOR,'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') END VALOR,
        CASE WHEN DATA_INICIO IS NOT NULL AND CGO < 800 THEN TO_CHAR(DATA_INICIO, 'DD/MM/YY')||' até '||TO_CHAR(DATA_FIM, 'DD/MM/YY') END DT1, NULL,
-        (select round(sum (x.vlroperacao),2) VALOR
-        from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-        where x.codgeraloper in (806,807)
-        and x.nroempresa IN (#LS1)
-        AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
-        AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2) NOTAS_EMITIDAS,
+        (SELECT ROUND(SUM(F.vlrcontabil),2)
+FROM MFLV_BASENF F WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER IN (806,807) AND F.STATUSDF != 'C'
+AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2) NOTAS_EMITIDAS,
       (select round(sum(x.valorlanctobrt *x.qtdlancto),2) VALOR
         from fato_perda x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
         where x.nroempresa IN (#LS1)
@@ -40,25 +38,23 @@ group by x.nroempresa  , x.codgeraloper  , y.descricao, TRUNC(X.DTAOPERACAO,'MM'
 
 UNION ALL
 
-Select NULL, 'B' O2, '2' O3, NULL O4, x.nroempresa LOJA , TRUNC(X.DTAOPERACAO,'MM') DATA_INICIO, LAST_DAY(TRUNC(X.DTAOPERACAO,'MM')) DATA_FIM,
-x.codgeraloper CGO , y.descricao,  round(sum (x.vlroperacao),2) VALOR
-from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-where x.codgeraloper in (806)
-and x.nroempresa IN (#LS1)
-AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
-AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
-group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')
+SELECT NULL, 'B' O2, '2' O3, NULL O4, F.NROEMPRESA, TRUNC(F.DTAEMISSAO, 'MM') , LAST_DAY(TRUNC(F.DTAEMISSAO, 'MM')), 
+       F.CODGERALOPER, Y.DESCRICAO, ROUND(SUM(F.vlrcontabil),2) VALOR
+FROM MFLV_BASENF F LEFT JOIN DIM_CODGERALOPER Y ON F.CODGERALOPER = Y.CODGERALOPER
+WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER IN(806) AND F.STATUSDF != 'C'
+AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2
+GROUP BY  F.NROEMPRESA, F.CODGERALOPER, Y.DESCRICAO, TRUNC(F.DTAEMISSAO, 'MM')
 
 UNION ALL
 
-Select NULL, 'D' O2,'4' O3, NULL O4, x.nroempresa LOJA , TRUNC(X.DTAOPERACAO,'MM') DATA_INICIO, LAST_DAY(TRUNC(X.DTAOPERACAO,'MM')) DATA_FIM,
-x.codgeraloper CGO , y.descricao,  round(sum (x.vlroperacao),2) VALOR
-from fatog_vendadia x INNER join dim_codgeraloper y on (x.codgeraloper = y.codgeraloper)
-where x.codgeraloper in (807)
-and x.nroempresa IN (#LS1)
-AND EXTRACT (MONTH FROM DTAOPERACAO) = :NR1 +1 
-AND EXTRACT (YEAR FROM DTAOPERACAO) = :NR2
-group by  x.nroempresa, x.codgeraloper, y.descricao, TRUNC(X.DTAOPERACAO,'MM')
+SELECT NULL, 'D' O2,'4' O3, NULL O4, F.NROEMPRESA, TRUNC(F.DTAEMISSAO, 'MM') , LAST_DAY(TRUNC(F.DTAEMISSAO, 'MM')), 
+       F.CODGERALOPER, Y.DESCRICAO, ROUND(SUM(F.vlrcontabil),2) VALOR
+FROM MFLV_BASENF F LEFT JOIN DIM_CODGERALOPER Y ON F.CODGERALOPER = Y.CODGERALOPER
+WHERE F.NROEMPRESA IN (#LS1) AND F.CODGERALOPER IN(807) AND F.STATUSDF != 'C'
+AND EXTRACT (MONTH FROM DTAEMISSAO) = :NR1 +1 
+AND EXTRACT (YEAR FROM DTAEMISSAO) = :NR2
+GROUP BY  F.NROEMPRESA, F.CODGERALOPER, Y.DESCRICAO, TRUNC(F.DTAEMISSAO, 'MM')
 
 UNION ALL
 
