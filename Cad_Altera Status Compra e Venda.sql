@@ -1,5 +1,5 @@
 UPDATE mrl_prodempseg g
-          set  g.statusvenda = 'I' ,  
+          set  g.statusvenda = DECODE(#LS1,'Ativo','A','Inativo','I') ,  
                g.usualteracao = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
                g.indreplicacao = 'S',
                g.dtaalteracao = sysdate,
@@ -13,7 +13,7 @@ update mrl_produtoempresa a
 set a.statuscompra = 'I'
 where a.seqproduto = :NR1;
 
-UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = 'I',
+UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S') ,
                               DTAHORALTERACAO = SYSDATE,
                               USUARIOALTERACAO = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
                               INDREPLICACAO = 'S',
@@ -22,4 +22,4 @@ UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = 'I',
 
 COMMIT;
           
-          SELECT 'Status alterado com Sucesso!' RETORNO FROM DUAL;
+          SELECT 'Status alterado com Sucesso! - PLU: '||TO_CHAR(:NR1)||' - Status Compra: '||'#LS1'|| ' - Status Venda: '||'#LS2'  RETORNO FROM DUAL;
