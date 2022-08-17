@@ -11,7 +11,7 @@ UPDATE mrl_prodempseg g
 
 update mrl_produtoempresa a
 set a.statuscompra = 'I'
-where a.seqproduto = :NR1;
+where a.seqproduto = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S');
 
 UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S') ,
                               DTAHORALTERACAO = SYSDATE,
