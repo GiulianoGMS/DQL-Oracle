@@ -1,0 +1,58 @@
+ALTER SESSION SET current_schema = CONSINCO;
+SELECT *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+ 
+from MAC_CUSTOFORNECLOG A, consinco.MAC_CUSTOFORNEC B, MAF_FORNECDIVISAO F 
+where B.SEQFAMILIA = A.SEQFAMILIA
+AND A.SEQFAMILIA = 4215        
+and B.SEQFORNECEDOR = 125333             
+and B.NRODIVISAO = 1           
+and B.NROEMPRESA = 0 
+and A.SEQCUSTOFORNEC = B.SEQCUSTOFORNECPEND 
+and F.SEQFORNECEDOR = B.SEQFORNECEDOR 
+and F.NRODIVISAO = B.NRODIVISAO 
+and B.UFEMPRESA = (select max( C.UFEMPRESA ) 
+  from MAC_CUSTOFORNEC C 
+  where C.SEQFAMILIA = 4215            
+  and C.SEQFORNECEDOR = 125333             
+  and C.NRODIVISAO = 1            
+  and C.NROEMPRESA = 0  
+  and   NOT EXISTS (SELECT  1 
+        FROM  MAX_DIVUFTABCUSTOEXCEC C1 
+        WHERE C1.NRODIVISAO = 1            
+        AND C1.UF = C.UFEMPRESA 
+        AND     'N'                                          = 'S'  ) 
+ and C.UFEMPRESA in ( select E.UF 
+                        from MAX_EMPRESA E 
+                        where E.STATUS = 'A' 
+                        and E.NRODIVISAO = 1            ) )
+                        
+                        UNION ALL
+                        
+
+SELECT *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+ 
+from MAC_CUSTOFORNECLOG A, consinco.MAC_CUSTOFORNEC B, MAF_FORNECDIVISAO F 
+where B.SEQFAMILIA = A.SEQFAMILIA
+AND A.SEQFAMILIA = 336574        
+and B.SEQFORNECEDOR = 125333             
+and B.NRODIVISAO = 1           
+and B.NROEMPRESA = 0 
+and A.SEQCUSTOFORNEC = B.SEQCUSTOFORNECPEND 
+and F.SEQFORNECEDOR = B.SEQFORNECEDOR 
+and F.NRODIVISAO = B.NRODIVISAO 
+and B.UFEMPRESA = (select max( C.UFEMPRESA ) 
+  from MAC_CUSTOFORNEC C 
+  where C.SEQFAMILIA = 336574            
+  and C.SEQFORNECEDOR = 125333             
+  and C.NRODIVISAO = 1            
+  and C.NROEMPRESA = 0  
+  and   NOT EXISTS (SELECT  1 
+        FROM  MAX_DIVUFTABCUSTOEXCEC C1 
+        WHERE C1.NRODIVISAO = 1            
+        AND C1.UF = C.UFEMPRESA 
+        AND     'N'                                          = 'S'  ) 
+ and C.UFEMPRESA in ( select E.UF 
+                        from MAX_EMPRESA E 
+                        where E.STATUS = 'A' 
+                        and E.NRODIVISAO = 1            ) )
+
