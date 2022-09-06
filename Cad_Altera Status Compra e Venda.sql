@@ -6,12 +6,11 @@ UPDATE mrl_prodempseg g
                g.MARGEMLUCROPRODEMPSEG =  Null,
                g.DTAAPROVASTATUSVDA    = Null,
                g.USUAPROVASTATUSVDA    = Null  
-          where g.seqproduto = :NR1
-          and g.statusvenda = 'A';
+          where g.seqproduto = :NR1;
 
 update mrl_produtoempresa a
-set a.statuscompra = 'I'
-where a.seqproduto = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S');
+set a.statuscompra = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S')
+where a.seqproduto = :NR1;
 
 UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S') ,
                               DTAHORALTERACAO = SYSDATE,
@@ -22,4 +21,4 @@ UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','
 
 COMMIT;
           
-          SELECT 'Status alterado com Sucesso! - PLU: '||TO_CHAR(:NR1)||' - Status Compra: '||'#LS1'|| ' - Status Venda: '||'#LS2'  RETORNO FROM DUAL;
+          SELECT 'Status alterado com Sucesso! - PLU: '||TO_CHAR(:NR1)||' - Status Compra: '||'#LS2'|| ' - Status Venda: '||'#LS1'  RETORNO FROM DUAL;
