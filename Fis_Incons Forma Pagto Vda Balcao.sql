@@ -1,4 +1,6 @@
--- Inserir em MADV_CRITICAPEDVENDA
+-- Criar a inconsistência na CONSINCO.MAD_CRITICAPEDCONFIG 
+
+-- Inserir o select em MADV_CRITICAPEDVENDA
 
 UNION ALL -- Giuliano - Solicitação Neides Ticket 104571 - 01/10/2022
 
