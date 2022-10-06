@@ -1,4 +1,4 @@
-create or replace view consinco.mrlv_etiq_nagumo_mixter as
+create or replace view consinco.mrlv_etiq_nagumo_mixter_v2 as
 select distinct(a.nroempresa),  a.seqproduto,          a.codacesso,
               a.qtdetiqueta,           a.dtaprominicio,       a.dtapromfim,
               a.codacessopadrao,       a.embalagempadrao,     a.padraoembvenda,
@@ -176,7 +176,7 @@ END)||'^FR^FS'
                      decode(nvl(h.precovalidpromoc,0), 0,
                             -- Pre¿o Normal
                             '^XA^PQ' || nvl(a.qtdetiqueta, 1) || ',,,' || '^FS^LL360^FS'                                                         || chr(13) || chr(10) ||
-                            '^FO030,190^BEN,25,Y,N^FD' || a.codacesso  || '^FS'                                                                  || chr(13) || chr(10) ||
+                            '^FO030,190^BY2.4^BEN,25,Y,N^FD' || a.codacesso  || '^FS'                                                                  || chr(13) || chr(10) ||
                             '^FO10,20^A0N,40,40^FD'  || a.desccompleta || ' ' || e.embalagem || '-' || e.qtdembalagem ||  '^FS'                                                                  || chr(13) || chr(10) ||
                             '^FO30,150^A0N,30,30^FD' || b.nomereduzido || '^FS'                                                                  || chr(13) || chr(10) ||
                             '^FO30,260^A0N,25,25^FD' || to_char(sysdate, 'DD/MM/YY HH24:MI:SS')
@@ -312,7 +312,7 @@ TRANSLATE(TO_CHAR(ROUND((A.PRECO1/(K.MULTEQPEMB*1000))*1000 ,2),'FM9990.00'), '.
 END)||'^FR^FS'||
 
                                       '^FO015,220^A0N,30,30^FDCOD:^FS' || '^FS'                                                                  || chr(13) || chr(10) ||
-                                      '^FO080,220^A0N,30,30^FD' || a.codacesso ||'^FS'                                                           || chr(13) || chr(10) ||
+                                      '^FO080,220^BEN,30,Y,N^FD' || a.codacesso ||'^FS'                                                           || chr(13) || chr(10) ||
                                       '^FO420,220^A0N,40,40^FDPOR R$^FS' || '^FS'                                                                || chr(13) || chr(10) ||
                                       '^FO480,110^A0N,150,120^FD' || lpad(trunc(h.precovalidpromoc), 4, ' ' ) || ',' ||
                                                                      lpad((h.precovalidpromoc - trunc(h.precovalidpromoc)) * 100, 2, 0)|| '^FS'  || chr(13) || chr(10) ||
@@ -328,7 +328,7 @@ END)||'^FR^FS'||
                      decode(nvl(h.precogerpromoc,0), 0,
                             -- Pre¿o Normal
                             '^XA^PQ' || nvl(a.qtdetiqueta, 1) || ',,,' || '^FS^LL360^FS'                                                         || chr(13) || chr(10) ||
-                            '^FO030,190^BEN,25,Y,N^FD' || a.codacesso  || '^FS'                                                                  || chr(13) || chr(10) ||
+                            '^FO030,190^BY2.4^BEN,25,Y,N^FD' || a.codacesso  || '^FS'                                                                  || chr(13) || chr(10) ||
                             '^FO10,20^A0N,40,40^FD'  || a.desccompleta || ' ' || e.embalagem || '-' || e.qtdembalagem ||  '^FS'                                                                  || chr(13) || chr(10) ||
                             '^FO30,150^A0N,30,30^FD' || b.nomereduzido || '^FS'                                                                  || chr(13) || chr(10) ||
                             '^FO30,260^A0N,25,25^FD' || to_char(sysdate, 'DD/MM/YY HH24:MI:SS')
