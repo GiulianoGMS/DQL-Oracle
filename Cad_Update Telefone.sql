@@ -1,4 +1,4 @@
--- Seta NULO Telefones + DDDs < 11 digitos ou Telefones com '000000000' OU '111111111'
+-- Seta NULO Telefones + DDDs < 10, > 12 digitos ou Telefones com '000000000' OU '111111111'
 
 UPDATE CONSINCO.GE_PESSOA A SET FONEDDD1 = NULL, FONENRO1 = NULL,
                                 FONEDDD2 = NULL, FONENRO2 = NULL,
