@@ -54,7 +54,8 @@ COMMIT;
 -- Insere desconto e percentual de tax.admin no título (8%)
                             
 UPDATE CONSINCO.FI_TITULO A SET VLRPAGO = (A.VLRORIGINAL / 100) * 8,
-                       PERCADMINISTRACAO = 8
-WHERE SEQTITULO = 784311793;
+                       PERCADMINISTRACAO = 8,
+                       VLRADMINISTRACAO = (A.VLRORIGINAL / 100) * 8
+WHERE SEQTITULO = 781151060;
 
 COMMIT;
