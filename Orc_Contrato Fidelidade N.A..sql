@@ -19,6 +19,8 @@ ORDER BY 2 DESC
 
 -- Log Alterações NF
 
+-- MLF_AUXNOTAFISCAL_LOG Encontra o SEQAUXNOTAFISCAL
+
 select x.*
 from consinco.mlf_auxnfitem_log x
 where x.seqauxnotafiscal = 3567618
