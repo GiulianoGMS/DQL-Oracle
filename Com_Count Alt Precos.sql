@@ -42,4 +42,4 @@ WHERE A.DTAHORALTERACAO BETWEEN DATE '2022-12-01' AND DATE '2022-12-22'
   AND A.NROSEGMENTO = 2 -- Alterações apenas no segmento Nagumo SP
          
 GROUP BY NROEMPRESA
-/*
+
