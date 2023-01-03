@@ -40,8 +40,8 @@ select X.NROEMPRESA,
        lpad(c.nrocgc,12,0)||lpad(c.digcgc,2,0), 
        SUBSTR(B.NOMERAZAO,1,32),
        NULL, NULL,
-       TO_CHAR(sum(x.vlroriginal)) TOT_VS,
-       '0'   TOT_ISS
+       TO_CHAR(sum(x.vlroriginal), 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') TOT_VS,
+       '0,00'   TOT_ISS
 
 from fi_titulo x inner join fi_especie k on (k.codespecie = x.codespecie and x.nroempresamae = k.nroempresamae )
                             inner join ge_empresa c on (c.nroempresa = x.nroempresa)
