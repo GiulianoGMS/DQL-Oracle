@@ -1,26 +1,43 @@
-ALTER SESSION SET current_schema = CONSINCO;
+SELECT A.SEQPESSOA EMP_DESTINO,'NF Não Importada' STATUS, A.NROEMPRESA EMITENTE, A.NUMERONF, 
+       TO_CHAR(A.DTAEMISSAO, 'DD/MM/YYYY') DTAEMISSAO, 
+       CASE WHEN X.NUMERONF IS NULL THEN NULL ELSE X.NUMERONF||' - CGO: '||X.CODGERALOPER||' - Data Emissão: '
+                                                             ||TO_CHAR(X.DTAEMISSAO, 'DD/MM/YYYY') END NF_MATOU_OP
 
-SELECT SEQPESSOA EMP_DESTINO,'NF Não Importada' STATUS, NROEMPRESA EMITENTE, NUMERONF, DTAEMISSAO
   FROM MLF_NOTAFISCAL A LEFT JOIN MAX_CODGERALOPER C ON A.CODGERALOPER = C.CODGERALOPER
+                        LEFT JOIN MLF_NOTAFISCAL X   ON A.NUMERONF     = SUBSTR(REGEXP_SUBSTR(X.OBSERVACAO, ':[^:](\S*)'),3,10)
+                                                    AND X.CODGERALOPER IN (202,16,69,135,22,141,12,169,135,27,23,26)
+                                                    AND X.SEQPESSOA    < 999
+                                                    AND X.DTAEMISSAO   BETWEEN :DT1 AND :DT2
+                                                    AND A.NROEMPRESA   = X.SEQPESSOA 
+                                                    AND X.STATUSNF != 'C'
  WHERE A.TIPNOTAFISCAL = 'S' 
-   AND DTAEMISSAO >= SYSDATE - 20
-   AND SEQPESSOA < 999 
-   AND DTAENTRADA IS NULL
-   AND SEQPESSOA != NROEMPRESA
-   AND STATUSNF != 'C'
-   AND NUMERONF NOT IN (SELECT NUMERONF FROM MLF_NOTAFISCAL B WHERE B.TIPNOTAFISCAL = 'E' 
+   AND A.DTAENTRADA IS NULL
+   AND A.SEQPESSOA != A.NROEMPRESA
+   AND A.STATUSNF  != 'C'
+   AND A.SEQPESSOA IN (#LS1)
+   AND A.DTAEMISSAO   BETWEEN :DT1 AND :DT2
+   AND A.NUMERONF NOT IN (SELECT NUMERONF FROM MLF_NOTAFISCAL B WHERE B.TIPNOTAFISCAL = 'E' 
                          AND SEQPESSOA < 999 
                          AND DTAENTRADA IS NOT NULL 
                          AND B.SEQPESSOA = A.NROEMPRESA
                          AND STATUSNF != 'C')
                          
-UNION ALL
+UNION ALL 
 
-SELECT D.NROEMPRESA DESTINO, 
+SELECT D.NROEMPRESA DESTINO,
        DECODE(D.INDPROCESSAMENTO, 'G', 'NF em Conferência', 'L', 'NF Liberada, Conferência Não Iniciada', 'NF Gerada, Processo Não Iniciado'),
-       D.SEQPESSOA EMITENTE, D.NUMERONF, D.DTAEMISSAO
+       D.SEQPESSOA EMITENTE, D.NUMERONF, TO_CHAR(D.DTAEMISSAO, 'DD/MM/YYYY'), NULL
   FROM MLF_AUXNOTAFISCAL D LEFT JOIN MAX_CODGERALOPER C ON D.CODGERALOPER = C.CODGERALOPER
- WHERE SEQPESSOA < 999 AND NUMERONF != 0
- 
- ORDER BY 1,2,5
+                           LEFT JOIN MLF_NOTAFISCAL X   ON D.NUMERONF     = SUBSTR(REGEXP_SUBSTR(X.OBSERVACAO, ':[^:](\S*)'),3,10)
+                                                    AND X.CODGERALOPER IN (202,16,69,135,22,141,12,169,135,27,23,26)
+                                                    AND X.SEQPESSOA    < 999
+                                                    AND X.DTAEMISSAO   BETWEEN :DT1 AND :DT2
+                                                    AND D.NROEMPRESA   = X.SEQPESSOA 
+                                                    AND X.STATUSNF != 'C'
+ WHERE D.SEQPESSOA < 999 
+   AND D.NUMERONF != 0   
+   AND D.DTAEMISSAO BETWEEN :DT1 AND :DT2
+   AND D.NROEMPRESA IN (#LS1)
+   AND D.STATUSNF != 'C'
    
+ ORDER BY 1,2,5 DESC;
