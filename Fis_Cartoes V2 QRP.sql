@@ -1,6 +1,7 @@
-
 SELECT EMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSACAO,
-       TOTAL_BRUTO_VENDAS, TOTAL_PRESTACOES_SERVICOS, TO_CHAR(:DT1, 'DD/MM/YYYY'), TO_CHAR(:DT2, 'DD/MM/YYYY'),
+       TO_CHAR(TOTAL_BRUTO_VENDAS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''')        TOTAL_BRUTO_VENDAS, 
+       TO_CHAR(TOTAL_PRESTACOES_SERVICOS, 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') TOTAL_PRESTACOES_SERVICOS, 
+       TO_CHAR(:DT1, 'DD/MM/YYYY') Data_Inicial, TO_CHAR(:DT2, 'DD/MM/YYYY') Data_Final,
       (SELECT TO_CHAR(SUM(TOTAL_BRUTO_VENDAS), 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''')
              FROM (
              
@@ -16,8 +17,8 @@ SELECT EMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSAC
                   ELSE NULL END)
         WHERE a.codespecie in ('CARDEB', 'CARTAO', 'TICKET', 'CCECOM', 'CDECOM', 'TKECOM','IFOOD','IFOPDV','SERVRC')
           and a.situacao != 'C'     and B.SEQPESSOA NOT IN (1458426)
-          and a.dtaemissao BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
-          AND A.NROEMPRESA = 10 
+          and a.dtaemissao BETWEEN :DT1 AND :DT2
+          AND A.NROEMPRESA = :NR1 
           GROUP BY A.NROEMPRESA, CODESPECIE
           
  UNION ALL 
@@ -33,8 +34,8 @@ SELECT EMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSAC
         and x.codespecie not in ('SERVRC') 
         and x.apporigem = 'F' 
         and nvl(k.espdevolucao,'N') = 'N' 
-        AND X.NROEMPRESA = 10
-        AND X.DTAEMISSAO BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
+        AND X.NROEMPRESA = :NR1
+        AND X.DTAEMISSAO BETWEEN :DT1 AND :DT2
 
  UNION ALL
 
@@ -48,8 +49,8 @@ SELECT EMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSAC
         and t.codoperacao in (452, 948) 
         and t.origemdoc = 'TSN' 
         and t.opcancelada is null
-        AND T.NROEMPRESA = 10
-        AND T.DTALANCTO BETWEEN DATE '2022-12-01' AND DATE '2022-12-31')) SUBTOTAL_VENDAS,
+        AND T.NROEMPRESA = :NR1
+        AND T.DTALANCTO BETWEEN :DT1 AND :DT2)) SUBTOTAL_VENDAS,
         
        (SELECT TO_CHAR(SUM(TOTAL_PREST_SERV),   'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') FROM (
 
@@ -64,8 +65,8 @@ SELECT EMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSAC
                   ELSE NULL END)
         where a.codespecie in ('CARDEB', 'CARTAO', 'TICKET', 'CCECOM', 'CDECOM', 'TKECOM','IFOOD','IFOPDV','SERVRC')
           and a.situacao != 'C'     and B.SEQPESSOA NOT IN (1458426)
-          and a.dtaemissao BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
-          AND A.NROEMPRESA = 10 
+          and a.dtaemissao BETWEEN :DT1 AND :DT2
+          AND A.NROEMPRESA = :NR1 
           GROUP BY  CODESPECIE
  )) SUBTOTAL_SERVICOS,
     (SELECT TO_CHAR(SUM(TOTAL), 'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') TOTAL
@@ -83,8 +84,8 @@ FROM (
                     ELSE NULL END)
           where a.codespecie in ('CARDEB', 'CARTAO', 'TICKET', 'CCECOM', 'CDECOM', 'TKECOM','IFOOD','IFOPDV','SERVRC')
             and a.situacao != 'C'     and B.SEQPESSOA NOT IN (1458426)
-            and a.dtaemissao BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
-            AND A.NROEMPRESA = 10 GROUP BY A.NROEMPRESA, A.CODESPECIE
+            and a.dtaemissao BETWEEN :DT1 AND :DT2
+            AND A.NROEMPRESA = :NR1 GROUP BY A.NROEMPRESA, A.CODESPECIE
     
  UNION ALL
     
@@ -99,8 +100,8 @@ FROM (
           and x.codespecie not in ('SERVRC') 
           and x.apporigem = 'F' 
           and nvl(k.espdevolucao,'N') = 'N' 
-          AND X.NROEMPRESA = 10
-          AND X.DTAEMISSAO BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
+          AND X.NROEMPRESA = :NR1
+          AND X.DTAEMISSAO BETWEEN :DT1 AND :DT2
 
  UNION ALL 
 
@@ -114,8 +115,8 @@ FROM (
           and t.codoperacao in (452, 948) 
           and t.origemdoc = 'TSN' 
           and t.opcancelada is null
-          AND T.NROEMPRESA = 10
-          AND T.DTALANCTO BETWEEN DATE '2022-12-01' AND DATE '2022-12-31')) TOTAL
+          AND T.NROEMPRESA = :NR1
+          AND T.DTALANCTO BETWEEN :DT1 AND :DT2)) TOTAL
 FROM (
 SELECT Y.* FROM (
 SELECT * FROM (
@@ -145,8 +146,8 @@ SELECT A.NROEMPRESA, LPAD(B.NROCGCCPF,12,0)||LPAD(B.DIGCGCCPF,2,0) PARTICIPANTE,
 
   where a.codespecie in ('CARDEB', 'CARTAO', 'TICKET', 'CCECOM', 'CDECOM', 'TKECOM','IFOOD','IFOPDV','SERVRC')
     and a.situacao != 'C'     and B.SEQPESSOA NOT IN (1458426)
-    and a.dtaemissao BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
-    and A.NROEMPRESA = 10
+    and a.dtaemissao BETWEEN :DT1 AND :DT2
+    and A.NROEMPRESA = :NR1
     GROUP BY LPAD(B.NROCGCCPF,12,0)||LPAD(B.DIGCGCCPF,2,0), B.NOMERAZAO, A.CODESPECIE, D.NOMERAZAO, A.NROEMPRESA
 )
 GROUP BY NROEMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSACAO
@@ -171,8 +172,8 @@ and x.seqpessoa <> c.seqpessoa
 and x.codespecie not in ('SERVRC') 
 and x.apporigem = 'F' 
 and nvl(k.espdevolucao,'N') = 'N' 
-AND X.NROEMPRESA = 10
-AND X.DTAEMISSAO BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
+AND X.NROEMPRESA = :NR1
+AND X.DTAEMISSAO BETWEEN :DT1 AND :DT2
   group by  NOMERAZAO,lpad(c.nrocgc,12,0)||lpad(c.digcgc,2,0) ,  to_char(x.dtaemissao, 'YYYY'), to_char(x.dtaemissao, 'MM'), lpad(B.NROCGCCPF,12,0)||lpad(B.DIGCGCCPF,2,0), x.codespecie,x.NROEMPRESA,to_char(x.dtaemissao, 'MM-YYYY')
 
 UNION ALL
@@ -189,8 +190,8 @@ and x.tipoconta = 'B'
 and t.codoperacao in (452, 948) 
 and t.origemdoc = 'TSN' 
 and t.opcancelada is null
-AND T.NROEMPRESA = 10
-AND T.DTALANCTO BETWEEN DATE '2022-12-01' AND DATE '2022-12-31'
+AND T.NROEMPRESA = :NR1
+AND T.DTALANCTO BETWEEN :DT1 AND :DT2
   group by NOMERAZAO,lpad(z.nrocgc,12,0)||lpad(z.digcgc,2,0) ,  
   to_char(t.dtalancto, 'YYYY'), to_char(t.dtalancto, 'MM'),  t.NROEMPRESA,to_char(t.dtalancto, 'MM-YYYY') 
 
