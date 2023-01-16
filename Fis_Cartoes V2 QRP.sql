@@ -157,7 +157,7 @@ GROUP BY NROEMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TR
 UNION ALL
 
 select X.NROEMPRESA, 
-       lpad(c.nrocgc,12,0)||lpad(c.digcgc,2,0), 
+       lpad(B.nrocgcCPF,12,0)||lpad(B.digcgcCPF,2,0), 
        SUBSTR(B.NOMERAZAO,1,32),
        NULL, NULL,
        sum(x.vlroriginal) TOT_VS,
@@ -184,7 +184,7 @@ SELECT T.NROEMPRESA, lpad(z.nrocgc,12,0)||lpad(z.digcgc,2,0),
 
 from FI_CTACORLANCA t inner join fi_ctacorrente x on (t.seqctacorrente = x.seqctacorrente)
                                             inner join ge_empresa z on (z.nroempresa = t.nroempresa)
-                                            LEFT JOIN GE_PESSOA C ON x.seqpessoanota = C.SEQPESSOA
+                                            LEFT JOIN GE_PESSOA C ON T.NROEMPRESA = C.SEQPESSOA
 where 1=1
 and x.tipoconta = 'B' 
 and t.codoperacao in (452, 948) 
