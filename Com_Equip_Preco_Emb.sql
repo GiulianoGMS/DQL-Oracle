@@ -1,3 +1,7 @@
+** Loop desenvolvido em:
+
+https://github.com/Giulianogms/Loops/blob/main/FL_Equip%20Emb%20Nag_SP.sql
+
 /* Backup */
 
 CREATE TABLE CONSINCO.MRL_PRODEMPSEG_BACKUP AS
