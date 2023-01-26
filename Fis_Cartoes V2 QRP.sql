@@ -43,6 +43,7 @@ SELECT EMPRESA, CASE WHEN PARTICIPANTE IN (SELECT LPAD(NROCGCCPF,12,0)||LPAD(DIG
         and x.seqpessoa <> c.seqpessoa
         and x.codespecie not in ('SERVRC') 
         and x.apporigem = 'F' 
+        AND X.SITUACAO != 'C'
         and nvl(k.espdevolucao,'N') = 'N' 
         AND X.NROEMPRESA = :NR1
         AND X.DTAEMISSAO BETWEEN :DT1 AND :DT2
@@ -109,6 +110,7 @@ FROM (
           and x.seqpessoa <> c.seqpessoa
           and x.codespecie not in ('SERVRC') 
           and x.apporigem = 'F' 
+          AND X.SITUACAO != 'C'
           and nvl(k.espdevolucao,'N') = 'N' 
           AND X.NROEMPRESA = :NR1
           AND X.DTAEMISSAO BETWEEN :DT1 AND :DT2
@@ -183,6 +185,7 @@ and x.codespecie not in ('SERVRC')
 and x.apporigem = 'F' 
 and nvl(k.espdevolucao,'N') = 'N' 
 AND X.NROEMPRESA = :NR1
+AND X.SITUACAO != 'C'
 AND X.DTAEMISSAO BETWEEN :DT1 AND :DT2
   group by  NOMERAZAO,lpad(c.nrocgc,12,0)||lpad(c.digcgc,2,0) ,  to_char(x.dtaemissao, 'YYYY'), to_char(x.dtaemissao, 'MM'), lpad(B.NROCGCCPF,12,0)||lpad(B.DIGCGCCPF,2,0), x.codespecie,x.NROEMPRESA,to_char(x.dtaemissao, 'MM-YYYY')
 
@@ -210,5 +213,5 @@ AND T.DTALANCTO BETWEEN :DT1 AND :DT2
 GROUP BY EMPRESA, PARTICIPANTE, NOME_PART_PAGTO, PARTICIP_TRANS, NOME_PART_TRANSACAO,
        SUBTOTAL_VENDAS,
        SUBTOTAL_SERVICOS, TOTAL
-       
-       ORDER BY 3 ASC
+
+ORDER BY 3 ASC
