@@ -21,6 +21,7 @@ INSERT INTO CONSINCO.FI_TITOPERACAO X ( X.SEQTITOPERACAO,
                               'P',
                               X.NRODOCUMENTO,
                               'Tarifa De Cobranca De CartaoOperação da Taxa Administrativa lançada via Integração dos Títulos',
+                              -- String retirada do sistema, mantive 'CartaoOperacao' para manter fiel
                               X.ANOTACAO,
                               X.TIPOASSUMIDO,
                               X.SEQCTACORRENTE,
