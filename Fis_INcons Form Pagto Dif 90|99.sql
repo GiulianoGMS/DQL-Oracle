@@ -1,0 +1,10 @@
+UNION ALL -- Ticket 178084 - Giuliano - 09/02/2023 - Solicitação Danielle
+          -- Bloqueia forma de pagamento diferente de 90|99 e CGO diferente de 806, 807, 918 e 919 nas emissões para empresas do grupo
+   
+   SELECT DISTINCT A.NROPEDVENDA, A.NROEMPRESA, 'Forma de Pagamento Incorreta' CODCRITICA
+   FROM CONSINCO.MAD_PEDVENDA A LEFT JOIN MRL_FORMAPAGTO D ON A.NROFORMAPAGTO = D.NROFORMAPAGTO
+   WHERE A.NROFORMAPAGTO NOT IN (90,99)
+   AND SEQPESSOA < 999 
+   AND A.SITUACAOPED != 'C'
+   AND DTAINCLUSAO > SYSDATE - 50
+   AND CODGERALOPER NOT IN (806,807,918,919) 
