@@ -17,9 +17,13 @@ select a.nroempresa EMPRESA,
           from CONSINCO.or_nfdespesa a
           where a.codmodelo in (01,06,21,22,28,29)
           and a.dtaentrada = DATE '2023-02-02'
-          and a.nroempresa in (02)) VALOR_TOTAL
+          and a.nroempresa in (02)) VALOR_TOTAL,
+          TO_CHAR(:DT1, 'DD/MM/YYYY') Data_Inicial, TO_CHAR(:DT2, 'DD/MM/YYYY') Data_Final
           
 from CONSINCO.or_nfdespesa a
 where a.codmodelo in (01,06,21,22,28,29)
-and a.dtaentrada = DATE '2023-02-02'
-and a.nroempresa in (02)
+and a.dtaentrada BETWEEN :DT1 AND :DT2
+and a.nroempresa in (#LS1)
+
+
+
