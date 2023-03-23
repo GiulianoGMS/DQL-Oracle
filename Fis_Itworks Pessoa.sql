@@ -1,3 +1,5 @@
+-- CONSINCO.NAGV_PESSOAITWORKS_BACKUP
+
 create or replace view consinco.nagv_pessoaitworks as
 (
 
@@ -8,7 +10,9 @@ select   --LPAD(ge.nrocgccpf,12,0)||LPAD(GE.DIGCGCCPF,2,0) CNPJCPF -- -Ticket 17
            GE.LOGRADOURO ENDERECO,
            GE.NROLOGRADOURO NUMERO,
            GE.BAIRRO BAIRRO,
-           UPPER(case when ge.fisicajuridica = 'F' then 'SEM_IE' else GE.INSCRICAORG end) IE_RG, --- Ticket 26437 Alteração 15/03/2022 Cipolla -- Ticket 48143 04/05/2022 Cipolla -- Ticket 65438 15/06/2022 *UPPER
+           UPPER(case when ge.fisicajuridica = 'F' then 'SEM_IE' else  
+                      CASE WHEN INSCRICAORG LIKE 'I %' THEN 'ISENTO' ELSE REPLACE(REPLACE(INSCRICAORG,'.',''),',','') end END) IE_RG, -- Alterado por Giuliano - Ticket 199320 - 23/03/2023 - Solic Silene
+            --- Ticket 26437 Alteração 15/03/2022 Cipolla -- Ticket 48143 04/05/2022 Cipolla -- Ticket 65438 15/06/2022 *UPPER
            GE.CMPLTOLOGRADOURO COMPLEMENTO,
            GE.FONEDDD1|| GE.FONENRO1 DDD_FONE,
            GE.CIDADE CIDADE,
