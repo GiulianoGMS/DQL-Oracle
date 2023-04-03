@@ -1,4 +1,6 @@
--- Confere produtos com estoque e inativos para venda
+-- Confere produtos:
+       -- Com estoque e inativos para venda
+       -- Com estoque e preço unitário zerado
 
 ALTER SESSION SET CURRENT_SCHEMA = CONSINCO;
 SELECT DISTINCT NROEMPRESA, XX.SEQPRODUTO, DESCCOMPLETA, ESTOQUE, PRECO, STATUS_VENDA FROM (
