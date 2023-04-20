@@ -10,7 +10,7 @@ SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 CASE WHEN CODOBRIGREC != '005' AND CODRECEITA NOT IN ('063-2','100-4') THEN 'O Código da obrigação a recolher e o Código da Receita estão incorretos' 
                   WHEN CODOBRIGREC != '005' THEN 'O Código da obrigação a recolher está incorreto'
                   WHEN CODRECEITA NOT IN ('063-2','100-4') THEN 'O Código da Receita está incorreto' ELSE NULL END 
-                ||' na Guia de Recolhimento, Verifique!' MENSAGEM
+                ||' na Guia de Recolhimento - Verificar com o Depto. Fiscal' MENSAGEM
 
   FROM CONSINCO.MLF_AUXNOTAFISCAL A INNER JOIN CONSINCO.MLF_GNRE B ON A.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
 
