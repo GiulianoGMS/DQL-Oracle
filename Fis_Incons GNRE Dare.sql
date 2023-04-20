@@ -1,3 +1,6 @@
+-- Alteração na CONSINCO.MLFV_AUXNOTAFISCALINCONS
+-- Ticket 219089 - Solic. Simone | Adicionado por Giuliano em 20/04/2023 - Validação GNRE tipo DARE
+
 SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 A.NUMERONF,
                 A.NROEMPRESA,
