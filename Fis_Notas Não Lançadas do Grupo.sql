@@ -8,21 +8,21 @@ SELECT A.SEQPESSOA EMP_DESTINO, CASE WHEN A.NUMERONF IN(SELECT Z.NRONOTA FROM CO
                                                              ||TO_CHAR(X.DTAEMISSAO, 'DD/MM/YYYY') END NF_MATOU_OP
 
   FROM MLF_NOTAFISCAL A LEFT JOIN MAX_CODGERALOPER C ON A.CODGERALOPER = C.CODGERALOPER
-                        LEFT JOIN MLF_NOTAFISCAL X   ON A.NUMERONF     = SUBSTR(REGEXP_SUBSTR(X.OBSERVACAO, ':[^:](\S*)'),3,10)
+                        LEFT JOIN MLF_NOTAFISCAL X   ON A.NUMERONF     = X.NFREFERENCIANRO
                                                     AND X.CODGERALOPER IN (202,16,69,135,22,141,12,169,135,27,23,26,953,923)
                                                     AND X.SEQPESSOA    < 999
-                                                    AND X.DTAEMISSAO   >= SYSDATE - 3 --:DT1 
+                                                    AND X.DTAEMISSAO   >= :DT1 
                                                     AND A.NROEMPRESA   = X.SEQPESSOA 
                                                     AND X.STATUSNF != 'C'
-                                                    AND REGEXP_LIKE(SUBSTR(REGEXP_SUBSTR(X.OBSERVACAO, ':[^:](\S*)'),3,10), '^[[:digit:]]+$')
+                                                    
  WHERE A.TIPNOTAFISCAL = 'S' 
-   AND A.DTAENTRADA IS NULL 
+   AND A.DTAENTRADA IS NULL
    AND A.SEQPESSOA != A.NROEMPRESA
    AND A.STATUSNF  != 'C'
-   AND A.SEQPESSOA IN (SELECT NROEMPRESA FROM GE_EMPRESA)
-   AND A.DTAEMISSAO  > SYSDATE - 3 --BETWEEN :DT1 AND :DT2 
+   AND A.SEQPESSOA IN (#LS1)
+   AND A.DTAEMISSAO  BETWEEN :DT1 AND :DT2
    AND A.NUMERONF NOT IN (SELECT NUMERONF FROM MLF_NOTAFISCAL B WHERE B.TIPNOTAFISCAL = 'E' 
-                         AND SEQPESSOA < 999   
+                         AND SEQPESSOA < 999 
                          AND DTAENTRADA IS NOT NULL 
                          AND B.SEQPESSOA = A.NROEMPRESA
                          AND STATUSNF != 'C')
@@ -37,17 +37,17 @@ SELECT D.NROEMPRESA DESTINO,
        CASE WHEN X.NUMERONF IS NULL THEN NULL ELSE X.NUMERONF||' - CGO: '||X.CODGERALOPER||' - Data Emissão: '
                                                              ||TO_CHAR(X.DTAEMISSAO, 'DD/MM/YYYY') END NF_MATOU_OP
   FROM MLF_AUXNOTAFISCAL D LEFT JOIN MAX_CODGERALOPER C ON D.CODGERALOPER = C.CODGERALOPER
-                           LEFT JOIN MLF_NOTAFISCAL X   ON D.NUMERONF     = SUBSTR(REGEXP_SUBSTR(X.OBSERVACAO, ':[^:](\S*)'),3,10)
+                           LEFT JOIN MLF_NOTAFISCAL X   ON D.NUMERONF     = X.NFREFERENCIANRO
                                                     AND X.CODGERALOPER IN (202,16,69,135,22,141,12,169,135,27,23,26,953,923)
                                                     AND X.SEQPESSOA    < 999
-                                                    AND X.DTAEMISSAO   >= SYSDATE - 3
+                                                    AND X.DTAEMISSAO   >= :DT1 
                                                     AND X.NROEMPRESA   = D.SEQPESSOA 
                                                     AND X.STATUSNF != 'C'
-                                                    AND REGEXP_LIKE(SUBSTR(REGEXP_SUBSTR(X.OBSERVACAO, ':[^:](\S*)'),3,10), '^[[:digit:]]+$')
+                                                    
  WHERE D.SEQPESSOA < 999 
    AND D.NUMERONF != 0   
-   AND D.DTAEMISSAO > SYSDATE - 3
-   AND D.NROEMPRESA IN (SELECT NROEMPRESA FROM GE_EMPRESA)
+   AND D.DTAEMISSAO  BETWEEN :DT1 AND :DT2
+   AND D.NROEMPRESA in (#LS1)
    AND D.STATUSNF != 'C'
    
- ORDER BY 1,2,5 DESC; 
+ ORDER BY 1,2,5 DESC;
