@@ -1,24 +1,36 @@
-UPDATE mrl_prodempseg g
-          set  g.statusvenda = DECODE(#LS1,'Ativo','A','Inativo','I') ,  
-               g.usualteracao = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
-               g.indreplicacao = 'S',
-               g.dtaalteracao = sysdate,
-               g.MARGEMLUCROPRODEMPSEG =  Null,
-               g.DTAAPROVASTATUSVDA    = Null,
-               g.USUAPROVASTATUSVDA    = Null  
-          where g.seqproduto = :NR1;
+UPDATE MRL_PRODEMPSEG G
+          SET  G.STATUSVENDA = DECODE(#LS1,'Ativo','A','Inativo','I') ,  
+               G.USUALTERACAO = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
+               G.INDREPLICACAO = 'S',
+               G.DTAALTERACAO = SYSDATE,
+               G.MARGEMLUCROPRODEMPSEG =  NULL,
+               G.DTAAPROVASTATUSVDA    = NULL,
+               G.USUAPROVASTATUSVDA    = NULL  
+               
+       WHERE G.SEQPRODUTO = :NR1
+         AND G.NROEMPRESA IN (#LS3); 
 
-update mrl_produtoempresa a
-set a.statuscompra = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S')
-where a.seqproduto = :NR1;
+-----------------------------
 
+UPDATE MRL_PRODUTOEMPRESA A
+SET A.STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S')
+WHERE A.SEQPRODUTO = :NR1
+  AND A.NROEMPRESA IN (#LS3);
+  
+-----------------------------
+  
 UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S') ,
                               DTAHORALTERACAO = SYSDATE,
                               USUARIOALTERACAO = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
                               INDREPLICACAO = 'S',
                               INDGEROUREPLICACAO = NULL
-          WHERE MAP_PRODEMPRSTATUS.SEQPRODUTO = :NR1;
+          WHERE MAP_PRODEMPRSTATUS.SEQPRODUTO = :NR1
+            AND NROEMPRESA IN (#LS3);
 
 COMMIT;
           
-          SELECT 'Status alterado com Sucesso! - PLU: '||TO_CHAR(:NR1)||' - Status Compra: '||'#LS2'|| ' - Status Venda: '||'#LS1'  RETORNO FROM DUAL;
+          SELECT 'Status alterado com Sucesso! - Status Compra: '||'#LS2'|| ' - Status Venda: '||'#LS1'  RETORNO FROM DUAL
+
+UNION ALL 
+
+SELECT 'PLU: '||TO_CHAR(:NR1)||' - Produto: '||DESCCOMPLETA FROM MAP_PRODUTO WHERE SEQPRODUTO = :NR1;
