@@ -5,3 +5,11 @@ SEQREGRA IN (SELECT SEQREGRA FROM FI_LOGREGRADDAUTIL WHERE SEQTITULO =
 (SELECT SEQTITULO FROM FI_TITULO FI WHERE NRODOCUMENTO = &DOC
                                       AND NROEMPRESA   = &EMP
                                       AND FI.DTAVENCIMENTO = &DTA)))
+                                      
+-- Por qual regra/ordem o título passou
+
+SELECT * FROM FI_DDAREGRA WHERE
+SEQREGRA IN (SELECT SEQREGRA FROM FI_LOGREGRADDAUTIL WHERE SEQTITULO = 
+(SELECT SEQTITULO FROM FI_TITULO FI WHERE NRODOCUMENTO = 14268
+                                      AND NROEMPRESA   = 16
+                                      AND FI.DTAVENCIMENTO = DATE '2023-05-08'))
