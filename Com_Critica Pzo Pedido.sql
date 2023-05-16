@@ -27,7 +27,9 @@ SELECT DISTINCT(X.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                   -- Function para tratar outras formas de pagamento de acordo com o cadastro (Fora a Dezena, Quinzena, Semana ou Mês)
                   FMAD_CALCDTAVENCTO((DECODE(MF.TIPODTABASEVENCTO, 'E', X.DTAEMISSAO, 'R', X.DTARECEBIMENTO, 'S', X.DTASAIDA)), MF.INDPZOPAGAMENTO,
                   CASE WHEN MP.PZOPAGAMENTO LIKE '%/%' THEN REGEXP_SUBSTR(REPLACE(MP.PZOPAGAMENTO, '/',' '), '(\S*)(\s)',1)
-                       ELSE MP.PZOPAGAMENTO END, NULL)) -1 -- 1 Dia de Margem Aceitável
+                       ELSE MP.PZOPAGAMENTO END, NULL)) 
+                       
+                       -1 -- 1 Dia de Margem Aceitável
 
    AND MP.PZOPAGAMENTO IS NOT NULL
    AND X.NUMERONF != 0
