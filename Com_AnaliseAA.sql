@@ -1,0 +1,46 @@
+-- Apuração
+
+select PERIODO,
+       COMPRADOR,
+       round(ABASTECIMENTO_AUTOMATICO, 2) AUTOMATICO,
+       round(TRASNSFERENCIA_MANUAL, 2) MANUAL, 
+       round(ABASTECIMENTO_AUTOMATICO /
+             (TRASNSFERENCIA_MANUAL + ABASTECIMENTO_AUTOMATICO) * 100) "%PART ABAS AUTOMATICO"
+  from (SELECT X.COMPRADOR,
+               to_char(x.DATA_FECHAMENTO, 'YYYY-MM') PERIODO,
+               SUM(X.AUTOMATICO) ABASTECIMENTO_AUTOMATICO,
+               SUM(X.MANUAL) TRASNSFERENCIA_MANUAL
+        
+          FROM CONSINCO.NAGV_ABASTAUTOM_CONTROLE X
+        
+         WHERE X.DATA_FECHAMENTO BETWEEN '18-JUN-2023' AND SYSDATE
+         GROUP BY X.COMPRADOR, to_char(x.DATA_FECHAMENTO, 'YYYY-MM'))
+ ORDER BY 1, 2
+
+-- Por Fornecedor
+
+SELECT nroempresa, DATA, CASE WHEN LOTE_DESCRICAO LIKE '%UTSP%' THEN 'ABAST' ELSE 'NORMAL' END TIPLOTE,
+             LOTE,
+             COMPRADOR,
+             
+             
+               SKU "PRODUTOS NO LOTE",
+             ACATADO "SUGESTAO ACEITA",
+             ALTERADO "SUGESTAO ALTERADA",
+
+            ROUND(ACATADO/ (ACATADO+ALTERADO)* 100) "PART%"
+FROM (
+select  nroempresa, TRUNC(T.DATA) DATA,
+            T.LOTE, 
+            COUNT(DISTINCT SKU) SKU,
+            T.LOTE_DESCRICAO,
+            T.comprador, 
+            SUM(NVL(T.AJUSTE_SIM,0)) ALTERADO,
+            SUM(NVL(T.AJUSTE_NAO,0)) ACATADO
+      
+from CONSINCO.nagv_pedidoautomatico_v2 t
+WHERE T.DATA  BETWEEN  '05-JUN-2023' AND '18-JUN-2023'
+  AND (COMPRADOR LIKE '%P_ES%' AND LOTE_DESCRICAO LIKE '%LUA NOVA%' OR t.COD_FOR = 113948)
+  AND COMPRADOR LIKE '%PAES%'
+GROUP BY T.LOTE , T.DATA, T.comprador,    T.LOTE_DESCRICAO, nroempresa)
+order by 3,1,2
