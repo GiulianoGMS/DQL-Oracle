@@ -1,3 +1,4 @@
+
 UPDATE MRL_PRODEMPSEG G
           SET  G.STATUSVENDA = DECODE(#LS1,'Ativo','A','Inativo','I') ,  
                G.USUALTERACAO = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
@@ -6,30 +7,23 @@ UPDATE MRL_PRODEMPSEG G
                G.MARGEMLUCROPRODEMPSEG =  NULL,
                G.DTAAPROVASTATUSVDA    = NULL,
                G.USUAPROVASTATUSVDA    = NULL  
-               
-       WHERE G.SEQPRODUTO = :NR1
-         AND G.NROEMPRESA IN (#LS3); 
-
------------------------------
+          WHERE G.SEQPRODUTO = :NR1
+          AND EXISTS (SELECT 1 FROM MAX_EMPRESASEG Z WHERE Z.NROEMPRESA = G.NROEMPRESA AND Z.NROSEGMENTO = G.NROSEGMENTO AND Z.STATUS = 'I');
 
 UPDATE MRL_PRODUTOEMPRESA A
 SET A.STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S')
-WHERE A.SEQPRODUTO = :NR1
-  AND A.NROEMPRESA IN (#LS3);
-  
------------------------------
-  
+WHERE A.SEQPRODUTO = :NR1;
+
 UPDATE MAP_PRODEMPRSTATUS SET STATUSCOMPRA = DECODE(#LS2,'Ativo','A','Inativo','I', 'Suspenso','S') ,
                               DTAHORALTERACAO = SYSDATE,
                               USUARIOALTERACAO = (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
                               INDREPLICACAO = 'S',
                               INDGEROUREPLICACAO = NULL
-          WHERE MAP_PRODEMPRSTATUS.SEQPRODUTO = :NR1
-            AND NROEMPRESA IN (#LS3);
-
+                              
+          WHERE MAP_PRODEMPRSTATUS.SEQPRODUTO = :NR1;
 COMMIT;
-          
-          SELECT 'Status alterado com Sucesso! - Status Compra: '||'#LS2'|| ' - Status Venda: '||'#LS1'  RETORNO FROM DUAL
+
+SELECT 'Status alterado com Sucesso! - Status Compra: '||'#LS2'|| ' - Status Venda: '||'#LS1'  RETORNO FROM DUAL
 
 UNION ALL 
 
