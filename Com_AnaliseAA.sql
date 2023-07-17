@@ -19,6 +19,7 @@ select PERIODO,
 
 -- Apuração Geral + Totais
        
+     
 SELECT * FROM (select --PERIODO,
        COMPRADOR,
        round(ABASTECIMENTO_AUTOMATICO, 2) AUTOMATICO,
@@ -32,7 +33,7 @@ SELECT * FROM (select --PERIODO,
         
           FROM CONSINCO.NAGV_ABASTAUTOM_CONTROLE X
         
-         WHERE X.DATA_FECHAMENTO BETWEEN '05-JUL-2023' AND '10-JUL-2023'
+         WHERE X.DATA_FECHAMENTO BETWEEN '&DT1' AND '&DT2'
          GROUP BY X.COMPRADOR--, to_char(x.DATA_FECHAMENTO, 'YYYY-MM')
          )
        --  WHERE COMPRADOR = 'RONIE'
@@ -57,11 +58,12 @@ SELECT * FROM (select --PERIODO,
         
           FROM CONSINCO.NAGV_ABASTAUTOM_CONTROLE X
         
-         WHERE X.DATA_FECHAMENTO BETWEEN '05-JUL-2023' AND '10-JUL-2023'
+         WHERE X.DATA_FECHAMENTO BETWEEN '&DT1' AND '&DT2'
          )
        --  WHERE COMPRADOR = 'RONIE'
  ORDER BY 1, 2)
 
+       
        
 -- Por Fornecedor
 
