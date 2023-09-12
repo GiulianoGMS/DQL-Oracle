@@ -9,12 +9,12 @@ SELECT TO_CHAR(A.DTAENTRADASAIDA, 'MM') MES, TO_CHAR(A.DTAENTRADASAIDA, 'YYYY') 
                                                                      + ( A.QTDENTRADAOUTRAS / 1 )
                                                                      - ( A.QTDSAIDAVENDA    / 1 )
                                                                      - ( A.QTDSAIDAOUTRAS   / 1 )))),2) END,0) FURTO_20,
-       NVL(CASE WHEN A.CODGERALOPER IN (30,35,46,47,62,63) THEN
+       NVL(CASE WHEN A.CODGERALOPER IN (30,35,46,47,62,63,263) THEN
                                           ROUND(ABS(SUM( A.VLRCTOBRUTOUNIT * ( ( A.QTDENTRADACOMPRA / 1 )
                                                                      + ( A.QTDENTRADAOUTRAS / 1 )
                                                                      - ( A.QTDSAIDAVENDA    / 1 )
                                                                      - ( A.QTDSAIDAOUTRAS   / 1 )))),2) END,0) QUEBRAS,
-       NVL(CASE WHEN A.CODGERALOPER IN (20,34,30,35,46,47,62,63)   THEN 
+       NVL(CASE WHEN A.CODGERALOPER IN (20,34,30,35,46,47,62,63,263)   THEN 
                                           ROUND(ABS(SUM( A.VLRCTOBRUTOUNIT * ( ( A.QTDENTRADACOMPRA / 1 )
                                                                      + ( A.QTDENTRADAOUTRAS / 1 )
                                                                      - ( A.QTDSAIDAVENDA    / 1 ) 
