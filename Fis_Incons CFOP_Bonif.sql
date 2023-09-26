@@ -1,3 +1,4 @@
+-- Adicionado na view CONSINCO.MLFV_AUXNOTAFISCALINCONS
 -- Ticket 291664 - Solic Dublia | Adicionado em 26/09/2023 por Giuliano
 
 SELECT  /*+OPTIMIZER_FEATURES_ENABLE('11.2.0.4') */
