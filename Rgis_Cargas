@@ -1,0 +1,18 @@
+SELECT T.SITE,
+       T.NOTA_FISCAL,
+       T.SUPORTE,
+       T.DUN,
+       T.EAN,
+       T.CODIGO_INTERNO,
+       T.DESCRICAO,
+       T.QTD_CX,
+       T.VALOR,
+       T.SETOR,
+       T.MISSAO,
+       T.PLACA,
+       T.TRANSPORTADOR,
+       T.ROMANEIO,
+       T.AGRUPAMENTO
+       
+FROM CONSINCO.NAGV_RGIS_CARGA T
+WHERE T.ROMANEIO IN  (1720690)
