@@ -1,0 +1,29 @@
+-- Adicionar em MLFV_AUXNOTAFISCALINCONS
+
+-- Ticket 333365 - Solic Simone - Adicionado em 28/12/2023 por Giuliano
+-- Validação EAN Tributavel - XML x C5
+
+SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
+                A.NUMERONF,
+                A.NROEMPRESA,
+                0   AS SEQAUXNFITEM,
+                'L' AS BLOQAUTOR,
+                76  AS CODINCONSISTENC,
+                CASE WHEN LPAD(X2.CODACESSO,13,0) = LPAD(NVL(L.M014_CD_EAN_TRIB,0),13,0) AND NVL(X2.INDEANTRIBNFE,'N') != 'S' 
+                  THEN 'Ean Cadastrado no Sistema Não Está Marcado Como "EAN TRIB"'
+                  ELSE 'EAN Trib. do Produto '||B.SEQPRODUTO||' no XML está divergente do EAN Trib. cadastrado no sistema! EAN Trib. XML: '||NVL(TO_CHAR(L.M014_CD_EAN_TRIB), 'NULO') END AS MENSAGEM
+
+  FROM CONSINCO.MLF_AUXNOTAFISCAL A INNER JOIN CONSINCO.MLF_AUXNFITEM B ON A.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
+                                    INNER JOIN TMP_M000_NF K ON (K.M000_NR_CHAVE_ACESSO = A.NFECHAVEACESSO)
+                                    INNER JOIN TMP_M014_ITEM L ON (L.M000_ID_NF = K.M000_ID_NF AND L.M014_NR_ITEM = B.SEQITEMNFXML)
+                                     LEFT JOIN MAP_PRODCODIGO X2 ON X2.SEQPRODUTO = B.SEQPRODUTO AND X2.TIPCODIGO = 'E' AND LPAD(X2.CODACESSO,13,0) = LPAD(NVL(L.M014_CD_EAN_TRIB,0),13,0)
+
+WHERE (NOT EXISTS (SELECT 1 FROM MAP_PRODCODIGO X 
+                   WHERE X.SEQPRODUTO = B.SEQPRODUTO 
+                   AND LPAD(X.CODACESSO,13,0) = LPAD(NVL(L.M014_CD_EAN_TRIB,0),13,0) AND X.TIPCODIGO = 'E')
+        OR NVL(X2.INDEANTRIBNFE,'N') != 'S')
+        
+  AND A.CODGERALOPER = 1
+  AND A.SEQPESSOA > 999
+  AND NROEMPRESA = 501
+  
