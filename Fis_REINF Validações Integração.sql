@@ -1,0 +1,22 @@
+SELECT CASE WHEN COD_NAT_REND IS NULL THEN 'Cod Nat Rend está NULO!'
+            WHEN CNPJ_EMP IS NULL     THEN 'CNPJ da empresa está NULO!'
+            WHEN ANO IS NULL          THEN 'ANO está NULO!'
+            WHEN MES IS NULL          THEN 'MES está NULO!'
+            WHEN CNPJ IS NULL         THEN 'CNPJ está NULO!'
+            WHEN DTAENTRADA IS NULL AND TIPO IN ('IR','CARTAO') THEN 'Data de Entrada está NULO!'
+            WHEN DTAVENCIMENTO IS NULL AND TIPO = 'PCC' THEN 'Data de Vencimento está NULO!'
+       END Inconsistencia,
+       X.*
+  FROM CONSINCO.NAGV_ITWORKS_REINF_CT_IR_PCC X
+  
+ WHERE X.NATUREZA NOT IN (6007, 765, 551, 571, 764, 1645, 366)
+ 
+   AND (COD_NAT_REND IS NULL
+    OR CNPJ_EMP IS NULL
+    OR ANO IS NULL
+    OR MES IS NULL
+    OR X.CNPJ IS NULL
+    OR X.TIPO IS NULL
+    OR DTAENTRADA IS NULL AND TIPO IN ('IR','CARTAO')
+    OR DTAVENCIMENTO IS NULL AND TIPO = 'PCC'
+       )
