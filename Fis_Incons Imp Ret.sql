@@ -5,7 +5,7 @@ ALTER SESSION SET CURRENT_SCHEMA = CONSINCO;
 -- Criado por Giuliano em 26/01/2024 - Solic Neides Ticket 341549
 -- Barra Imp Ret Nulo com CST 60
 
-DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
+SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 A.NUMERONF,
                 A.NROEMPRESA,
                 0   AS SEQAUXNFITEM,
@@ -17,7 +17,7 @@ DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 CASE WHEN M014_VL_ICMS_ST_RET  IS NULL THEN ' vICMSSTRet'     ELSE NULL END||
                 CASE WHEN M014_VL_BC_FCP_RET   IS NULL THEN ' vBCFCPSTRet'    ELSE NULL END||
                 CASE WHEN M014_VL_FCP_RET      IS NULL THEN ' vFCPSTRet'      ELSE NULL END||
-                ' esta(o) nulo(s)! Entre em contato com o Departamento Fiscal'
+                ' esta(o) nulo(s) no XML! Entre em contato com o Departamento Fiscal'
                 MENSAGEM
 
   FROM CONSINCO.MLF_AUXNOTAFISCAL A INNER JOIN CONSINCO.MLF_AUXNFITEM B ON A.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
