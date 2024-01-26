@@ -13,10 +13,10 @@ DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 77  AS CODINCONSISTENC,
                 'O(s) Campo(s): '||
                 CASE WHEN M014_VL_OP_PROP_DIST IS NULL THEN 'vICMSSubstituto' ELSE NULL END||
-                CASE WHEN M014_VL_BC_ST_RET IS NULL THEN ' vBCSTRet'          ELSE NULL END||
-                CASE WHEN M014_VL_ICMS_ST_RET IS NULL THEN ' vICMSSTRet'      ELSE NULL END||
-                CASE WHEN M014_VL_BC_FCP_RET IS NULL THEN ' vBCFCPSTRet'      ELSE NULL END||
-                CASE WHEN M014_VL_FCP_RET IS NULL THEN ' vFCPSTRet'           ELSE NULL END||
+                CASE WHEN M014_VL_BC_ST_RET    IS NULL THEN ' vBCSTRet'       ELSE NULL END||
+                CASE WHEN M014_VL_ICMS_ST_RET  IS NULL THEN ' vICMSSTRet'     ELSE NULL END||
+                CASE WHEN M014_VL_BC_FCP_RET   IS NULL THEN ' vBCFCPSTRet'    ELSE NULL END||
+                CASE WHEN M014_VL_FCP_RET      IS NULL THEN ' vFCPSTRet'      ELSE NULL END||
                 ' esta(o) nulo(s)! Entre em contato com o Departamento Fiscal'
                 MENSAGEM
 
