@@ -11,7 +11,7 @@ SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 'L' AS BLOQAUTOR,
                 73  AS CODINCONSISTENC,
                 CASE WHEN L.CODCEST IS NULL                                                                    THEN 'Cod. CEST do produto '||
-                  B.SEQPRODUTO||' no XML está NULO - Abrir chamado para do Departamento Fiscal - CEST XML: '||NVL(TO_CHAR(L.CODCEST), 'NULO')||' - C5: '||E.CODCEST 
+                  B.SEQPRODUTO||' no XML está NULO - Abrir chamado para do Departamento Fiscal - CEST XML: '||NVL(TO_CHAR(L.CODCEST), 'NULO')||' - C5: '||E.CODCEST
                     -- WHEN NVL(L.CODCEST,0) != NVL(E.CODCEST,0) AND NVL(L.M014_CD_NCM,0) != NVL(CODNBMSH,0)   THEN 'Codigo CEST e NCM do produto '||B.SEQPRODUTO||' no  XML estão divergentes do cadastro no sistema - Abrir chamado para o Depto Cadastro Tributário'
                      WHEN NVL(L.CODCEST,0) != NVL(E.CODCEST,0) /*AND NVL(L.M014_CD_NCM,0)  = NVL(CODNBMSH,0) */THEN 'Cod. CEST do produto '||
                   B.SEQPRODUTO||' está divergente do cadastro no sistema - Abrir chamado para o Depto Cadastro Tributário - CEST XML: '||L.CODCEST||' - C5: '||E.CODCEST
@@ -26,6 +26,6 @@ SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                                     INNER JOIN TMP_M014_ITEM L ON (L.M000_ID_NF = K.M000_ID_NF AND L.M014_NR_ITEM = B.SEQITEMNFXML)
 
 WHERE A.CODGERALOPER = 1
-  AND L.M014_DM_TRIB_ICMS IN (1,7,8,19,23) -- De/Para na Function fc5_RetIndSituacaoNF_NFe - Regra Barra CST 10 70 60 202 e 500, respectivamente na clausula
+  AND L.M014_DM_TRIB_ICMS IN (1,9,8,19,23) -- De/Para na Function fc5_RetIndSituacaoNF_NFe - Regra Barra CST 10 70 60 202 e 500, respectivamente na clausula
   -- AND A.NROEMPRESA = 501 -- Inicialmente apenas CD
-  AND (NVL(L.CODCEST,0) != NVL(E.CODCEST,0))-- OR NVL(L.M014_CD_NCM,0) != NVL(CODNBMSH,0))
+  AND (NVL(L.CODCEST,0) != NVL(E.CODCEST,1))-- OR NVL(L.M014_CD_NCM,0) != NVL(CODNBMSH,0))
