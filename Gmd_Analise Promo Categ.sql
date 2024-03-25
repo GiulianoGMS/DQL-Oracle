@@ -5,7 +5,7 @@ SELECT CATEGORIAN1, SUM(JAN) JAN,   SUM(FEV) FEV,
                     SUM(MAI) MAI,   SUM(JUN) JUN,
                     SUM(AGO) AGO,   SUM(SETEM) SETEM,
                     SUM(OUTU) OUTU, SUM(NOV) NOV,
-                    SUM(DEZ)
+                    SUM(DEZ) DEZ
                     
                     FROM (
 
@@ -45,8 +45,7 @@ SELECT/*+OPTIMIZER_FEATURES_ENABLE('11.2.0.4')*/
     AND B.STATUS != 'I'
     AND DTAINICIO >= DATE '2024-01-01' AND DTAFIM <= DATE '2025-01-01'
         
-   GROUP BY CATEGORIAN1, EXTRACT (MONTH FROM DTAINICIO),
-                         EXTRACT (MONTH FROM DTAFIM)
+   GROUP BY CATEGORIAN1, DTAINICIO, DTAFIM
    
    ORDER BY 2 DESC
    ) GROUP BY CATEGORIAN1
