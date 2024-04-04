@@ -1,6 +1,6 @@
 ALTER SESSION SET current_schema = CONSINCO; 
 
--- 'Percentual não bate com valor de contrato
+-- Alegacao '"Percentual não bate com valor de contrato"'
 -- Validando se houve desintegração
 -- Pegando também seqauxnotafiscal para a consulta por item
 
