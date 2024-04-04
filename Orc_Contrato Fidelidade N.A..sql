@@ -3,6 +3,7 @@ ALTER SESSION SET current_schema = CONSINCO;
 -- Alegacao '"Percentual não bate com valor de contrato"'
 -- Validando se houve desintegração
 -- Pegando também seqauxnotafiscal para a consulta por item
+-- PS.: Nao esqueca de ver se todos os itens da nota de fato estão em algum contrato
 
 SELECT * FROM MLF_AUXNOTAFISCAL_LOG X 
  WHERE X.NUMERONF = 3222051 
