@@ -1,5 +1,22 @@
 ALTER SESSION SET current_schema = CONSINCO; 
 
+-- 'Percentual não bate com valor de contrato
+-- Validando se houve desintegração
+-- Pegando também seqauxnotafiscal para a consulta por item
+
+SELECT * FROM MLF_AUXNOTAFISCAL_LOG X 
+ WHERE X.NUMERONF = 3222051 
+   AND NROEMPRESA = 501 
+   AND OPERACAO IN ('INS','DEL')
+   
+   ORDER BY 4 DESC
+
+-- Log de alteração por item
+  
+SELECT * FROM MLF_AUXNFITEM_LOG Y
+ WHERE Y.SEQAUXNOTAFISCAL = 5918097
+   AND CAMPO IN ('VLRDESCCONTRATO')
+
 -- Contrato
 
 SELECT * FROM MGC_CONTRATO 
