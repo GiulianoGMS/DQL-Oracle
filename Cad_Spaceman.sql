@@ -131,14 +131,20 @@ SELECT A.SEQPRODUTO PRODUCT_ID,
                      LEFT  JOIN MAP_FAMFORNEC    E ON E.SEQFAMILIA = A.SEQFAMILIA   AND E.PRINCIPAL = 'S'
                      INNER JOIN GE_PESSOA        G ON G.SEQPESSOA  = E.SEQFORNECEDOR
                      INNER JOIN MAP_FAMEMBALAGEM H ON H.SEQFAMILIA = A.SEQFAMILIA   AND H.QTDEMBALAGEM = B.QTDEMBALAGEM
-                     INNER JOIN MRL_PRODUTOEMPRESA I ON I.SEQPRODUTO = A.SEQPRODUTO AND I.NROEMPRESA = 8
-                     INNER JOIN MRL_PRODEMPSEG   J ON J.SEQPRODUTO = A.SEQPRODUTO AND J.NROEMPRESA = I.NROEMPRESA AND J.QTDEMBALAGEM = B.QTDEMBALAGEM
+                     INNER JOIN MRL_PRODUTOEMPRESA I ON I.SEQPRODUTO = A.SEQPRODUTO AND I.NROEMPRESA = 8 
+                                                                                    AND I.DTAULTVENDA > SYSDATE - 180
+                                                                                    AND I.ESTQLOJA > 0
+                     INNER JOIN MRL_PRODEMPSEG   J ON J.SEQPRODUTO = A.SEQPRODUTO   AND J.NROEMPRESA = I.NROEMPRESA
+                                                                                    AND J.QTDEMBALAGEM = B.QTDEMBALAGEM
+                                                                                    AND J.STATUSVENDA  = 'A'
+                                                                                     
                      INNER JOIN DIM_CATEGORIA@CONSINCODW DC ON DC.SEQFAMILIA = C.SEQFAMILIA
                      
   WHERE B.QTDEMBALAGEM = 1 
     --AND A.SEQPRODUTO   = 237203
     AND J.NROSEGMENTO  = 2
-    AND DC.CATEGORIAN1 = 'BEBIDAS'
-    AND ROWNUM <= 500
+    AND DC.CATEGORIAN3 = 'CATCHUP'
+    --AND ROWNUM <= 500rapazz
     --AND A.DESCCOMPLETA NOT LIKE '%ZZ%'
     
+   -- SELECT DISTINCT CATEGORIAN3 FROM DIM_CATEGORIA@CONSINCODW
