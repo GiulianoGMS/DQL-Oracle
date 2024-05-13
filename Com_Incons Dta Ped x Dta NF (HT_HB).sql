@@ -1,11 +1,14 @@
-ALTER SESSION SET CURRENT_SCHEMA = CONSINCO;
+-- Adicionar em MLFV_AUXNOTAFISCALINCONS
 
+-- Criado por Giuliano em 13/05/2024 - Solic Comprador Junior/Sandra Maceron - FLV
+-- Barrar vinculação de pedidos com data de emissão maior que data de emissão da NF, apenas FLV
+ 
 SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 A.NUMERONF,
                 A.NROEMPRESA,
                 0   AS SEQAUXNFITEM,
                 'L' AS BLOQAUTOR,
-                73  AS CODINCONSISTENC,
+                78  AS CODINCONSISTENC,
                 'A Data do pedido '||B.NROPEDIDOSUPRIM||' vinculado ao produto '||B.SEQPRODUTO||' ('||TO_CHAR(PS.DTAEMISSAO, 'DD/MM/YYYY')||')'||
                 ' é MAIOR que a data de emissão da NF ('||TO_CHAR(A.DTAEMISSAO, 'DD/MM/YYYY')||')' AS MENSAGEM
 
@@ -22,3 +25,4 @@ WHERE 1=1
   AND CP.COMPRADOR = 'EQUIPE FLV'
   AND PS.DTAEMISSAO > A.DTAEMISSAO
   AND A.DTAEMISSAO > SYSDATE - 100
+  --AND A.NUMERONF = 714577 
