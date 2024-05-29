@@ -1,6 +1,24 @@
 BEGIN
   CONSINCO.NAGP_EXPORTA_SPACEMAN(8);
   END;
+  
+
+-- Chamada em Loop _ Emp
+
+BEGIN
+  
+  FOR emp IN (SELECT NROEMPRESA FROM CONSINCO.MAX_EMPRESA WHERE NROEMPRESA < 100)
+    
+  LOOP
+  
+  CONSINCO.NAGP_EXPORTA_SPACEMAN(emp.NROEMPRESA);
+  
+  COMMIT;
+  
+  END LOOP;
+  
+END;
+  
 
 -- Pegando os nomes das colunas pq tenho preguica
 
