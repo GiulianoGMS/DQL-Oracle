@@ -180,15 +180,18 @@ CREATE OR REPLACE PROCEDURE CONSINCO.NAGP_EXPORTA_SPACEMAN (v_Emp NUMBER) IS
 
     v_file UTL_FILE.file_type;
     v_line VARCHAR2(32767);
+    v_Targetcharset varchar2(40 BYTE);
+    v_Dbcharset varchar2(40 BYTE);
     v_Cabecalho VARCHAR2(4000);
     v_LpadLoja  VARCHAR2(3);
     v_Categoria VARCHAR2(200);
+    --v_Count NUMBER(10);
     
 BEGIN
     
     v_LpadLoja := LPAD(v_Emp,3,0);
     
-    FOR t IN (SELECT DISTINCT CATEGORIAN3 FROM DIM_CATEGORIA@CONSINCODW WHERE CATEGORIAN3 IS NOT NULL)
+    FOR t IN (SELECT DISTINCT A.CATEGORIAN3 FROM DIM_CATEGORIA@CONSINCODW A INNER JOIN CONSINCO.NAGT_SPACEMAN_CATEG B ON A.CATEGORIAN3 = B.CATEGORIAN3)
       
     LOOP
     
@@ -196,6 +199,8 @@ BEGIN
     
     -- Abre o arquivo para escrita
     v_file := UTL_FILE.fopen('/u02/app_acfs/arquivos/Spaceman', v_LpadLoja||'_'||v_Categoria||'_Products'||'.csv', 'w', 32767);
+    --v_Dbcharset := 'AMERICAN_AMERICA.AL32UTF8';
+    --v_Targetcharset := 'AMERICAN_AMERICA.WE8MSWIN1252';
     
     -- Pega o nome das colunas para inserir no cabecalho
     SELECT LISTAGG(COLUMN_NAME,';') WITHIN GROUP (ORDER BY COLUMN_ID)
@@ -224,7 +229,8 @@ BEGIN
                        
                   FROM CONSINCO.NAGV_SPACEMAN_DATA X
                  WHERE X.PN = v_Emp
-                   AND X.PC = t.Categorian3) 
+                   AND X.PC = t.Categorian3
+                   )
       
       LOOP
       
