@@ -13,7 +13,8 @@ SELECT DISTINCT (X.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 'L' AS BLOQAUTOR,
                 80  AS CODINCONSISTENC,
                 'O Produto: '||B.SEQPRODUTO||' Está com a tag EAN Tributável NULA no XML! Ean(s) C5: '||
-                LISTAGG(X2.CODACESSO, ', ')WITHIN GROUP(ORDER BY X2.SEQPRODUTO) MSG
+                LISTAGG(X2.CODACESSO, ', ')WITHIN GROUP(ORDER BY X2.SEQPRODUTO)||
+                ' - Solicite a troca da nota. Dúvidas entrar em contato com o Depto Fiscal.' MSG
       
   FROM CONSINCO.MLF_AUXNOTAFISCAL X INNER JOIN CONSINCO.MLF_AUXNFITEM B ON X.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
                                  INNER JOIN TMP_M000_NF K         ON K.M000_NR_CHAVE_ACESSO = X.NFECHAVEACESSO
@@ -39,5 +40,7 @@ WHERE 1=1
   -- Inicialmente ira validar apenas a tag nula no XML
   AND X2.CODACESSO IS NOT NULL AND M014_CD_EAN_TRIB IS NULL 
   --AND LPAD(X2.CODACESSO,14,0) != LPAD(NVL(L.M014_CD_EAN_TRIB,0),14,0)
+  -- Inicialmente apenas 8 e 501
+  AND X.NROEMPRESA IN (501,8)
   GROUP BY X.SEQAUXNOTAFISCAL, X.NUMERONF, X.NROEMPRESA, B.SEQPRODUTO
   
