@@ -1,0 +1,19 @@
+ALTER SESSION SET CURRENT_SCHEMA = CONSINCO;
+
+-- Criar crítica em MAD_CRITICAPEDCONFIG 
+-- Inserir select em consinco.MADV_CRITICAPEDVENDA
+-- Barra Prod Sem Custo Informado (Base) na tabela de custos (503) 
+-- Barra Prod sem a 503 como fornec principal
+
+SELECT DISTINCT A.NROPEDVENDA, A.NROEMPRESA, 'G:Produto Sem Custo inf Tab.C' CODCRITICA
+   FROM CONSINCO.MAD_PEDVENDA A INNER JOIN MAD_PEDVENDAITEM B ON A.NROPEDVENDA = B.NROPEDVENDA
+                                                             AND A.NROEMPRESA  = B.NROEMPRESA
+                                INNER JOIN MAP_PRODUTO P      ON P.SEQPRODUTO  = B.SEQPRODUTO
+   
+   WHERE 1=1
+   AND A.NROEMPRESA   = 503
+   AND A.NROTABVENDA  = 77
+   AND A.CODGERALOPER = 64
+   AND A.SITUACAOPED != 'C'
+   AND NVL(FMSU_CUSTOCOMPRAATUAL(P.SEQFAMILIA,1,A.NROEMPRESA,'S','SP','TF',A.NROEMPRESA),0) = 0
+   
