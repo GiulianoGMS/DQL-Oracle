@@ -13,7 +13,10 @@ SELECT DISTINCT (X.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 'L' AS BLOQAUTOR,
                 80  AS CODINCONSISTENC,
                 'O Produto: '||B.SEQPRODUTO||' Está com a tag EAN Tributável NULA no XML! Ean(s) C5: '||
-                LISTAGG(X2.CODACESSO, ', ')WITHIN GROUP(ORDER BY X2.SEQPRODUTO)||
+                
+                --Removido pois quando tem vários eans ultrapassa os 250 caracteres da tabela de inconsistencias
+                --LISTAGG(X2.CODACESSO, ', ')WITHIN GROUP(ORDER BY X2.SEQPRODUTO)||
+                
                 ' - Solicite a troca da nota. Dúvidas entrar em contato com o Depto Fiscal.' MSG
       
   FROM CONSINCO.MLF_AUXNOTAFISCAL X INNER JOIN CONSINCO.MLF_AUXNFITEM B ON X.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
