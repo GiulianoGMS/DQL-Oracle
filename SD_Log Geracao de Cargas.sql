@@ -1,3 +1,34 @@
+-- Bruna Macedo | Log Carga PDV | Tkt 423552
+
+-- Tabela
+
+CREATE TABLE CONSINCO.NAGT_LOG_CARGAPDV (NROEMPRESA NUMBER(3),
+                                         DTALOG     DATE,
+                                         USUARIOEXE VARCHAR2(50),
+                                         INDGERAPDV VARCHAR2(1),
+                                         INDGERABALANCA VARCHAR2(1),
+                                         TIPOCARGA VARCHAR2(1));
+                                         
+SELECT * FROM CONSINCO.NAGT_LOG_CARGAPDV
+
+         -- Gravando Log - Solic Bruna Macedo - Tkt 423552 - Giuliano 08/07/2024
+         
+         INSERT INTO NAGT_LOG_CARGAPDV L VALUES (EMP.NROEMPRESA, SYSDATE, (SELECT SYS_CONTEXT ('USERENV','CLIENT_IDENTIFIER')FROM DUAL),
+                                                 DECODE(psTIPOLOG, 'Não Gera', 'N', 'Parcial', 'P', 'Total', 'T'),
+                                                 DECODE(psBALANCA, 'Não', 'N',      'Parcial', 'P', 'Total', 'T'),
+                                                 NULL);
+         COMMIT;
+
+          -- Gravando Log - Solic Bruna Macedo - Tkt 423552 - Giuliano 08/07/2024 no JOB
+         
+         INSERT INTO NAGT_LOG_CARGAPDV L VALUES (i.NROEMPRESA, SYSDATE, 'JOB_CARGAPDV',
+                                                 DECODE(vsTipoCarga, 'Não Gera', 'N', 'Parcial', 'P', 'Total', 'T'),
+                                                 DECODE(vsTipoCarga, 'Não', 'N',      'Parcial', 'P', 'Total', 'T'),
+                                                 NULL);
+         COMMIT;
+
+--========================== Consulta/View C5
+
 SELECT * FROM (
 
 SELECT M.NROEMPRESA, A.SEQPRODUTO PLU, DESCCOMPLETA,
@@ -16,12 +47,16 @@ SELECT M.NROEMPRESA, A.SEQPRODUTO PLU, DESCCOMPLETA,
                                                                      AND PL.QTDEMBALAGEM = B.QTDEMBALAGEM
                               
                               
- WHERE (A.SEQPRODUTO = 122238 OR E.CODACESSO = 0)
+ WHERE (A.SEQPRODUTO = :NR1 OR E.CODACESSO = :NR2)
    AND B.QTDEMBALAGEM = 1
-   AND B.NROEMPRESA = 3
+   AND B.NROEMPRESA = :LS1
    
  GROUP BY M.NROEMPRESA, A.SEQPRODUTO, DESCCOMPLETA, TO_CHAR(L.DTALOG, 'DD/MM/YYYY HH24:MI:SS'), L.USUARIOEXE, L.INDGERAPDV, L.INDGERABALANCA)
  
- WHERE TO_DATE(DTA_CARGA, 'DD/MM/YYYY HH24:MI:SS') >= TO_DATE(DTA_ULTIMA_ALT, 'DD/MM/YYYY HH24:MI:SS') 
+ WHERE DTA_CARGA >= DTA_ULTIMA_ALT 
    
  ORDER BY 1
+ 
+--======
+ 
+SELECT * FROM CONSINCO.NAGT_LOG_CARGAPDV XX
