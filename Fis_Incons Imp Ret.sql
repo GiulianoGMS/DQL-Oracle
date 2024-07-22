@@ -17,7 +17,7 @@ SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 CASE WHEN NVL(L.M014_VL_ICMS_ST_RET,0)  = 0 THEN ' vICMSSTRet'     ELSE NULL END||
                 --CASE WHEN M014_VL_BC_FCP_RET   IS NULL THEN ' vBCFCPSTRet'    ELSE NULL END||
                 --CASE WHEN M014_VL_FCP_RET      IS NULL THEN ' vFCPSTRet'      ELSE NULL END||
-                ' do produto '||B.SEQPRODUTO||' esta(o) nulo(s) no XML! Entre em contato com o Departamento Fiscal' -- Trazer PLU
+                ' do produto '||B.SEQPRODUTO||' esta(o) nulo(s) no XML! Entre em contato com o Departamento Fiscal'
                 MENSAGEM
 
   FROM CONSINCO.MLF_AUXNOTAFISCAL A INNER JOIN CONSINCO.MLF_AUXNFITEM B ON A.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
@@ -30,7 +30,10 @@ SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
 WHERE A.CODGERALOPER = 1
   --AND A.NROEMPRESA IN (501,11,8,26,1,7,9,14,22,23,25,28,31,40,46) -- Solicitadas por Neides
   AND A.SEQPESSOA NOT IN (SELECT SEQPESSOA FROM GE_PESSOA G WHERE G.NROCGCCPF = 236433150110) -- Criar De/Para Posteriormente
-  AND L.M014_DM_TRIB_ICMS = 8 -- De/Para na Function fc5_RetIndSituacaoNF_NFe - Regra barra apenas CST 60
+  AND (L.M014_DM_TRIB_ICMS = 8 -- De/Para na Function fc5_RetIndSituacaoNF_NFe - Regra barra apenas CST 60
+  -- Acrescentando SN - Ticket 421458 - Giuliano 22/07/2024
+   OR EXISTS(SELECT 1 FROM MAF_FORNECEDOR SN WHERE SN.MICROEMPRESA = 'S' AND SEQFORNECEDOR = A.SEQPESSOA)
+      AND M014_CD_CFOP NOT IN (5101,5102))
   -- Critérios que nao podem estar nulos
   AND (NVL(L.M014_VL_OP_PROP_DIST,0) = 0  -- vICMSSubstituto
    OR  NVL(L.M014_VL_BC_ST_RET,0)    = 0  -- vBCSTRet
