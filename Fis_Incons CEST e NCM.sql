@@ -4,10 +4,6 @@
 -- Barra CEST NULO / CEST ou NCM divergente do cad no sistema
 -- Retirado validacao do NCM
 
--- Ticket 324275 - Solic Simone - Adicionado em 04/12/2023 por Giuliano
--- Barra CEST NULO / CEST ou NCM divergente do cad no sistema
--- Retirado validacao do NCM Temporariamente
-
 SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 A.NUMERONF,
                 A.NROEMPRESA,
@@ -36,5 +32,5 @@ WHERE A.CODGERALOPER = 1
   -- Trata SN
   OR A.CODGERALOPER = 1
  AND EXISTS(SELECT 1 FROM MAF_FORNECEDOR SN WHERE SN.MICROEMPRESA = 'S' AND SEQFORNECEDOR = A.SEQPESSOA)
- AND M014_CD_CFOP NOT IN (5101,5102)
+ AND M014_CD_CFOP NOT IN (5401,5101,5102,6102)
  AND (NVL(L.CODCEST,0) != NVL(E.CODCEST,1))-- OR NVL(L.M014_CD_NCM,0) != NVL(CODNBMSH,0))*/
