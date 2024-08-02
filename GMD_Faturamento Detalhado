@@ -1,0 +1,13 @@
+-- View em https://github.com/GiulianoGMS/Objects-Oracle/blob/main/NAGV_FATURAMENTO_QH15%20.sql
+-- Na view C5:
+
+SELECT XY.LJ,
+       XY.NRO_PDV,
+       TO_CHAR(XY.DATA_VENDA, 'DD/MM/YYYY') DATA_VENDA,
+       XY.QUARTO_DE_HORA,
+       XY.QTDITEM,
+       XY.FATURAMENTO,
+       XY.QTD_CUPONS
+  FROM CONSINCO.NAGV_FATURAMENTO_QH15 XY
+ WHERE DATA_VENDA = DATE '2024-07-15'
+   AND LJ = 8
