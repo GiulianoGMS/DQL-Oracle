@@ -9,10 +9,10 @@ SELECT DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 A.NUMERONF,
                 A.NROEMPRESA,
                 0   AS SEQAUXNFITEM,
-                'L' AS BLOQAUTOR, -- SOLICITAÇÃO SILENE 19/02/2024 TEAMSN
+                'L' AS BLOQAUTOR, -- SOLICITAC?O SILENE 19/02/2024 TEAMSN
                 77  AS CODINCONSISTENC,
                 'O(s) Campo(s): '||
-                CASE WHEN NVL(L.M014_VL_OP_PROP_DIST,0) = 0 THEN 'vICMSSubstituto' ELSE NULL END||
+                --CASE WHEN NVL(L.M014_VL_OP_PROP_DIST,0) = 0 THEN 'vICMSSubstituto' ELSE NULL END||
                 CASE WHEN NVL(L.M014_VL_BC_ST_RET,0)    = 0 THEN ' vBCSTRet'       ELSE NULL END||
                 CASE WHEN NVL(L.M014_VL_ICMS_ST_RET,0)  = 0 THEN ' vICMSSTRet'     ELSE NULL END||
                 --CASE WHEN M014_VL_BC_FCP_RET   IS NULL THEN ' vBCFCPSTRet'    ELSE NULL END||
@@ -33,10 +33,10 @@ WHERE A.CODGERALOPER = 1
   AND (L.M014_DM_TRIB_ICMS = 8 -- De/Para na Function fc5_RetIndSituacaoNF_NFe - Regra barra apenas CST 60
   -- Acrescentando SN - Ticket 421458 - Giuliano 22/07/2024
    OR EXISTS(SELECT 1 FROM MAF_FORNECEDOR SN WHERE SN.MICROEMPRESA = 'S' AND SEQFORNECEDOR = A.SEQPESSOA)
-      AND M014_CD_CFOP NOT IN (5101,5102))
-  -- Critérios que nao podem estar nulos
-  AND (NVL(L.M014_VL_OP_PROP_DIST,0) = 0  -- vICMSSubstituto
-   OR  NVL(L.M014_VL_BC_ST_RET,0)    = 0  -- vBCSTRet
+      AND M014_CD_CFOP NOT IN (5401,5101,5102,6102))
+  -- Criterios que nao podem estar nulos
+  --AND (NVL(L.M014_VL_OP_PROP_DIST,0) = 0  -- vICMSSubstituto -- Retirado tkt 440544
+  AND (NVL(L.M014_VL_BC_ST_RET,0)    = 0  -- vBCSTRet
    OR  NVL(L.M014_VL_ICMS_ST_RET,0)  = 0)  -- vICMSSTRet
  --OR  L.M014_VL_BC_FCP_RET   IS NULL  -- vBCFCPSTRet -- Removidos - Solic Neides
  --OR  L.M014_VL_FCP_RET      IS NULL) -- vFCPSTRet   -- ^
