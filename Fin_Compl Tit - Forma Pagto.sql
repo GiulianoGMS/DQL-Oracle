@@ -29,10 +29,15 @@ SELECT NROEMPRESA, X.SEQPESSOA||' - '||G.NOMERAZAO FORNEC, X.NROTITULO, CODESPEC
                           'CCO',
                           'DCC',
                           'OPG',
-                          'TDC',
-                          'TDS')
+                          'TDC')
 
    AND NROEMPRESA IN (#LT1)
+   AND CODESPECIE IN ('AGUA','ALUGPG','ANTREC','ATIVO','ATIVOC','ATIVEFU','COFINS','CRIPAG','CSSLL','DESP',
+                      'DESPKM','DIVSOC','DUPP','DVRBEC','ENERGI','ESPORT','FATICD','FATNAG','FGTS','FGTSQT','FRETE','GNRE',
+                      'ICMS','IMPOST','INSS','INSSNF','INTANG','IPI','IPTU','IR','IRRFFP','IRRFNF','ISSQN','ISSQNP','ISSST',
+                      'LEIROU','MKFUNC','MKPREM','PAGEST','PCCNF','PIS','RECARG','REEMB','RESCIS','RETSOC','SEGURO','SERVPJ','SUPERT','TEL','VLDESC')
+   
+   ORDER BY 1,2
    
    ORDER BY 1,2
    
