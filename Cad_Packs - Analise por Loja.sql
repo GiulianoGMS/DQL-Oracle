@@ -18,9 +18,13 @@ SELECT DISTINCT S.NROEMPRESA, X.SEQPRODUTO PLU, X.DESCCOMPLETA,
                                      WHERE Z2.QTDEMBALAGEM = 1
                                        AND Z2.TIPCODIGO = 'E' 
                                        AND Z2.INDUTILVENDA = 'S') ZZ ON ZZ.SEQPRODUTO = Z.SEQPRODUTO
+                        INNER JOIN MAP_FAMDIVISAO F ON F.SEQFAMILIA = X.SEQFAMILIA
+                        INNER JOIN MAX_COMPRADOR C ON C.SEQCOMPRADOR = F.SEQCOMPRADOR
+                                       
  WHERE Z.QTDEMBALAGEM > 1
    AND Z.INDUTILVENDA = 'S'
    AND TIPCODIGO = 'E'
    AND E.ESTQLOJA > DECODE(:LS2, 'Indiferente', -99999, 'Com Estoque', 0)
-   
+   AND COMPRADOR IN (#LS4)
+    
 ORDER BY 3,5
