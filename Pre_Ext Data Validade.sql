@@ -1,0 +1,26 @@
+-- QRP em
+
+SELECT NROEMPRESA, INITCAP(G.NOMERAZAO) FORNEC, 
+       X.SEQPRODUTO PLU, DESCCOMPLETA DESCRICAO,
+       INITCAP(COMPRADOR) COMPRADOR,
+       TO_CHAR(DTAFIM, 'DD/MM/YYYY') VENCIMENTO,
+       X.VLRPRECOPROMOC VLR_REBAIXA, 
+       X.QTDESOLICITADA,
+       DECODE(:LS2,'Aprovados','A','Pendentes','P','Todos') STATUS_FILTRO,
+       DECODE(X.STATUS, 'A','Aprovado','P','Pendente','Reprovado') STATUS_ITEM,
+       TO_CHAR(:DT1, 'DD/MM/YYYY') VENC_INI,
+       TO_CHAR(:DT2, 'DD/MM/YYYY') VENC_FIM
+
+  FROM MRL_PROMOCESPECIALHIST X INNER JOIN MAP_PRODUTO P     ON P.SEQPRODUTO   = X.SEQPRODUTO
+                                INNER JOIN MAP_FAMFORNEC F   ON F.SEQFAMILIA   = P.SEQFAMILIA AND F.PRINCIPAL = 'S'
+                                INNER JOIN GE_PESSOA G       ON G.SEQPESSOA    = F.SEQFORNECEDOR 
+                                INNER JOIN MAP_FAMDIVISAO FC ON FC.SEQFAMILIA = P.SEQFAMILIA
+                                INNER JOIN MAX_COMPRADOR C   ON C.SEQCOMPRADOR = FC.SEQCOMPRADOR
+                                
+                                
+ WHERE G.SEQPESSOA IN (#NR1)
+   AND X.DTAFIM BETWEEN :DT1 AND :DT2
+   AND COMPRADOR IN (#LS1)
+   AND X.STATUS IN ('A','P')
+   AND (X.STATUS = DECODE(:LS2,'Aprovados','A','Pendentes','P','X') OR DECODE(:LS2,'Aprovados','A','Pendentes','P','X')= 'X')
+ORDER BY 3,1;
