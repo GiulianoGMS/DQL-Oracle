@@ -1,4 +1,4 @@
--- QRP em
+-- QRP em https://github.com/GiulianoGMS/QRPs/blob/main/RelExtValidade.QRP
 
 SELECT NROEMPRESA, INITCAP(G.NOMERAZAO) FORNEC, 
        X.SEQPRODUTO PLU, DESCCOMPLETA DESCRICAO,
