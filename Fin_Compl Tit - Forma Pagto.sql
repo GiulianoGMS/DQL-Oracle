@@ -25,7 +25,7 @@ SELECT X.NROEMPRESA LJ, X.SEQPESSOA||' - '||G.NOMERAZAO FORNEC, X.NROTITULO, X.C
             WHEN B.SITUACAO = 'N' AND NVL(B.SEQENVIO,0) > 0 THEN 'ENVIADA'
             WHEN B.SITUACAO IS NULL THEN 'NÃO PROGRAMADA'
        ELSE 'PROGRAMADA' END SITUACAO_PAG,
-       FC.NROBANCO BANCO_ENVIO, FB.BANCO BANCO_RECEB
+       CASE WHEN B.SITUACAO = 'C' THEN NULL ELSE FC.NROBANCO END BANCO_ENVIO, FB.BANCO BANCO_RECEB
 
   FROM FI_TITULO X INNER JOIN FI_COMPLTITULO A ON A.SEQTITULO = X.SEQTITULO
                    INNER JOIN GE_PESSOA G      ON G.SEQPESSOA = X.SEQPESSOA
@@ -36,32 +36,30 @@ SELECT X.NROEMPRESA LJ, X.SEQPESSOA||' - '||G.NOMERAZAO FORNEC, X.NROTITULO, X.C
                   /*LEFT JOIN CONSINCO.FI_RETPAGTOELETR FR ON FR.SEQENVIO = B.SEQENVIO*/
                   
  WHERE X.DTAVENCIMENTO BETWEEN :DT1 AND :DT2
-   AND OBRIGDIREITO = 'O'
+  AND OBRIGDIREITO = 'O'
+   /* Filtra formas */  
    AND NVL(FORMAPAGAMENTO, 'X') !=  'TDS'
    AND(NVL(FORMAPAGAMENTO, 'X') IN ('CHQ',
-                                  /*'CCC'*/
                                     'CCO',
-                                  /*'DCC'*/
                                     'OPG',
                                     'TDC')
-                          
-   OR (FORMAPAGAMENTO IN ('CCC', 'DCC') AND (NVL(FC.NROBANCO,999) != NVL(FB.BANCO,888))
+   /* Se for CCC ou DCC, analisa o banco */ 
+   OR FORMAPAGAMENTO IN ('CCC', 'DCC') AND (NVL(FC.NROBANCO,999) != NVL(FB.BANCO,888) OR B.SEQTITULO IS NULL)
+   /* Se o pagto estiver cancelado */
    OR NVL(FORMAPAGAMENTO, 'X') IN  ('CHQ',
-                                  /*'CCC'*/
+                                    'CCC', 
                                     'CCO',
-                                  /*'DCC'*/
+                                    'DCC', 
                                     'OPG',
                                     'TDC')
-                                    AND B.SITUACAO = 'C' AND ABERTOQUITADO = 'A'))
-
+                                    AND B.SITUACAO = 'C' AND ABERTOQUITADO = 'A')
    AND X.NROEMPRESA IN (#LS1)
-   AND X.ABERTOQUITADO = 'A'
+   AND ABERTOQUITADO = 'A'
    AND X.CODESPECIE IN ('AGUA','ALUGPG','ANTREC','ATIVO','ATIVOC','ATIVEFU','COFINS','CRIPAG','CSSLL','DESP',
                         'DESPKM','DIVSOC','DUPP','DVRBEC','ENERGI','ESPORT','FATICD','FATNAG','FGTS','FGTSQT','FRETE','GNRE',
                         'ICMS','IMPOST','INSS','INSSNF','INTANG','IPI','IPTU','IR','IRRFFP','IRRFNF','ISSQN','ISSQNP','ISSST',
                         'LEIROU','MKFUNC','MKPREM','PAGEST','PCCNF','PIS','RECARG','REEMB','RESCIS','RETSOC','SEGURO','SERVPJ','SUPERT','TEL','VLDESC')
    ORDER BY 1,2;
-
 -- Nova Vs 1
 
 SELECT X.SEQTITULO, X.NROEMPRESA, X.SEQPESSOA||' - '||G.NOMERAZAO FORNEC, X.NROTITULO, X.CODESPECIE,
