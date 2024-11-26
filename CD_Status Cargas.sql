@@ -1,9 +1,8 @@
 -- Consulta Status Cargas CD | Montadas x Agrupadas
 
-ALTER SESSION SET CURRENT_SCHEMA = CONSINCO;
 
 SELECT DISTINCT NROEMPRESA EMPRESA, ETQPALETECARREG ETIQUETA, DESCTIPESPECIE LOJA, TO_CHAR(DTAHORINIMONT, 'DD/MM/YYYY') DATA_MONTAGEM, USUMONTAGEM USUARIO, DESCSTATUSCARREG STATUS,
-       TO_CHAR(:DT1, 'DD/MM/YYYY') DTA_INICIO, TO_CHAR(:DT2, 'DD/MM/YYYY') DTA_FIM
+       TO_CHAR(:DT1, 'DD/MM/YYYY') DTA_INICIO, TO_CHAR(:DT2 , 'DD/MM/YYYY') DTA_FIM
 
 FROM (
 
@@ -12,7 +11,7 @@ SELECT  NROEMPRESA,
         MIN(XXX.DESCTIPESPECIE)          DESCTIPESPECIE,
         MIN(XXX.DTAHORINIMONTMASTER)     DTAHORINIMONT,
         MIN(XXX.USUMONTAGEMMASTER)       USUMONTAGEM,
-        MIN(XXX.DESCSTATUSCARREGMASTER)  DESCSTATUSCARREG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        MIN(XXX.DESCSTATUSCARREGMASTER)  DESCSTATUSCARREG, SEQCLIENTE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 
 FROM  (SELECT  MLO_PALETECARREG.NROEMPRESA, A1.TIPOETQPALETECARREG || A1.SEQPALETECARREG AS ETQPALETECARREGAGRUPAMENTO,
     A1.TIPOETQPALETECARREG AS TIPOETQPALETECARREGAGRUP,
@@ -63,7 +62,7 @@ FROM  (SELECT  MLO_PALETECARREG.NROEMPRESA, A1.TIPOETQPALETECARREG || A1.SEQPALE
       ELSE NULL
     END
     ) AS DESCSTATUSCARREGMASTER,
-    MLO_TIPESPECIE.SEQCLIENTE
+    MLO_TIPESPECIE.SEQCLIENTE SEQCLIENTE
 
   FROM  MLO_PALCARREGAGRUPAMENTO,
     MLO_PALETECARREG A1,
@@ -83,9 +82,9 @@ FROM  (SELECT  MLO_PALETECARREG.NROEMPRESA, A1.TIPOETQPALETECARREG || A1.SEQPALE
   AND MLO_TIPESPECIE.NROEMPRESA = MLO_PALETE.NROEMPRESA
 
   
-AND MLO_PALETECARREG.NROEMPRESA IN (501,504,505,506)             
+AND MLO_PALETECARREG.NROEMPRESA IN (#LS3)             
 AND TRUNC( MLO_PALETECARREG.DTAHORINIMONT ) >= :DT1                                    
-AND TRUNC( MLO_PALETECARREG.DTAHORINIMONT ) <= :DT2                 
+AND TRUNC( MLO_PALETECARREG.DTAHORINIMONT ) <= :DT2                  
 AND MLO_PALETECARREG.STATUSCARREG IN ('M','B')                     
 AND MLO_PALETECARREG.STATUSCARREG LIKE (DECODE(:LS1, 'Montada','M','Agrupada','B','%%'))
 
@@ -143,7 +142,7 @@ AND MLO_PALETECARREG.STATUSCARREG LIKE (DECODE(:LS1, 'Montada','M','Agrupada','B
   ) XXX
 GROUP BY
   SEQPALETECARREGAGRUPAMENTO, nroempresa,
-ROLLUP( SEQPALETECARREG )
+ROLLUP( SEQPALETECARREG ), SEQCLIENTE
 
 UNION ALL
 
@@ -165,7 +164,7 @@ CASE WHEN MLO_PALETECARREG.STATUSCARREG = 'C' THEN 'Carregada'
      WHEN MLO_PALETECARREG.STATUSCARREG = 'U' THEN 'Em Auditoria'
      ELSE NULL
     END
-  ) AS DESCSTATUSCARREG
+  ) AS DESCSTATUSCARREG, SEQCLIENTE
 
 FROM  MLO_PALETECARREG,
   MLO_PALCARREGRF,
@@ -185,9 +184,9 @@ AND NOT EXISTS(
   WHERE  X1.SEQPALETECARREG = MLO_PALETECARREG.SEQPALETECARREG
   )
 
-AND MLO_PALETECARREG.NROEMPRESA IN (501,504,505,506)             
+AND MLO_PALETECARREG.NROEMPRESA IN (#LS3)             
 AND TRUNC( MLO_PALETECARREG.DTAHORINIMONT ) >= :DT1                                        
-AND TRUNC( MLO_PALETECARREG.DTAHORINIMONT ) <= :DT2                                      
+AND TRUNC( MLO_PALETECARREG.DTAHORINIMONT ) <= :DT2                                       
 AND MLO_PALETECARREG.STATUSCARREG IN ('M','B')                     
 AND MLO_PALETECARREG.STATUSCARREG LIKE (DECODE(:LS1, 'Montada','M','Agrupada','B','%%'))
 
@@ -215,9 +214,11 @@ CASE WHEN MLO_PALETECARREG.STATUSCARREG = 'C' THEN 'Carregada'
      WHEN MLO_PALETECARREG.STATUSCARREG = 'I' THEN 'ExpediÃ§Ã£o'
      WHEN MLO_PALETECARREG.STATUSCARREG = 'U' THEN 'Em Auditoria'
      ELSE NULL
-  END
-  ),
-  MLO_TIPESPECIE.SEQCLIENTE )
+  END, SEQCLIENTE
+  ) )
+
+WHERE SEQCLIENTE IN (SELECT NROEMPRESA FROM GE_EMPRESA A WHERE FANTASIA IN (#LS2))
   
 ORDER BY STATUS, EMPRESA
+
 
