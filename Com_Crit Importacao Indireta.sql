@@ -3,8 +3,9 @@
 
   SELECT DISTINCT X.SEQGERCOMPRA,
                   102 AS CODIGOCONSIST,
-                  'CGO 95 ou 93 não informado na capa do lote para transferência de Importação Indireta, verifique!',
-                  NULL AS COMPLEMENTO,
+                  'CGO 95 ou 93 não informado na capa do lote para transferência de Importação Indireta, verifique! '||Y.SEQPRODUTO,
+                  'Produto: '||Y.SEQPRODUTO ||' - '|| P.DESCCOMPLETA COMPLEMENTO,
+                 /* NULL AS COMPLEMENTO,*/
                   'B' AS BLOQUEIOLIBERACAO
     FROM MAC_GERCOMPRA X INNER JOIN MAC_GERCOMPRAITEM Y          ON X.SEQGERCOMPRA = Y.SEQGERCOMPRA
                          INNER JOIN CONSINCO.MAC_GERCOMPRAFORN Z ON Z.SEQGERCOMPRA = X.SEQGERCOMPRA
@@ -24,3 +25,5 @@
                                                                                 Y.SEQPRODUTO,
                                                                                 'C'))
                                                   FROM DUAL))) != 'EX'
+         AND Y.QTDTRANSF > 0
+
