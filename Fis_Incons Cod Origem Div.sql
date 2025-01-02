@@ -1,6 +1,6 @@
 -- Ticket 204660 - Adicionado por Giuliano - Solic Danielle 30/03
 -- Regra: Trava Cod Origem XML = 0 e C5 1,2,3,8 || OU || XML: 1,2,3,8 e C5 0,4,5,7
--- Ultima atualizacao em 21/11/2023 - Ticket 320474
+-- Ultima atualizacao em 21/11/2023 - Ticket 512625 -- Penultima Ticket 320474
 -- Alterado em 25/06/24 por Giuliano - Ticket 417539 - Barrar todas divergencias
 -- Alterado em 28/06/24 por Giuliano - Ticket 419280 - Altera regra para FLV
 
@@ -22,18 +22,14 @@ SELECT /*+OPTIMIZER_FEATURES_ENABLE('11.2.0.4')*/
                                     --INNER JOIN DIM_CATEGORIA@CONSINCODW DC ON DC.SEQFAMILIA = E.SEQFAMILIA
 
 -- Alterado em 25/06/24 por Giuliano - Ticket 417539 - Barrar todas divergencias
-/*
-WHERE L.M014_DM_ORIG_ICMS IN (1,2,3,8) AND D.CODORIGEMTRIB IN (0,4,5,7) AND A.SEQPESSOA > 999
-   OR L.M014_DM_ORIG_ICMS IN (0,4,5,7) AND D.CODORIGEMTRIB IN (1,2,3,8) AND A.SEQPESSOA > 999
 
-   -- INVERSO
-
-   OR D.CODORIGEMTRIB IN (1,2,3,8) AND L.M014_DM_ORIG_ICMS IN (0,4,5,7) AND A.SEQPESSOA > 999
-   OR D.CODORIGEMTRIB IN (0,4,5,7) AND L.M014_DM_ORIG_ICMS IN (1,2,3,8) AND A.SEQPESSOA > 999
-*/
 WHERE NVL(L.M014_DM_ORIG_ICMS,1) != NVL(D.CODORIGEMTRIB,2)
   AND A.SEQPESSOA > 999
- -- AND (A.NROEMPRESA IN (1,2,3,7,11,26,31,42,51,53,501) OR A.NROEMPRESA <= 30) -- Solic Neides/Dani
+-- Ticket 512625 - 5 x 0 = X x X = Passa
+-- Minha logica: Se o DECODE do XML retornar X e o DECODE da C5 Também, não vai barrar
+  AND DECODE(NVL(L.M014_DM_ORIG_ICMS,1), 5, 'X', 0, 'X', 1) 
+  !=  DECODE(NVL(D.CODORIGEMTRIB,2)    , 5, 'X', 0, 'X', 2) 
+--
   AND A.DTAEMISSAO > SYSDATE - 50
 --
 -- Alterado em 28/06/24 por Giuliano - Ticket 419280 - Altera regra para FLV
@@ -45,3 +41,4 @@ WHERE NVL(L.M014_DM_ORIG_ICMS,1) != NVL(D.CODORIGEMTRIB,2)
 
   AND(NVL(L.M014_DM_ORIG_ICMS,1) IN (2,3,8)   AND NVL(D.CODORIGEMTRIB,2) IN (0,4,5,7)
    OR NVL(L.M014_DM_ORIG_ICMS,1) IN (0,4,5,7) AND NVL(D.CODORIGEMTRIB,2) IN (2,3,8))
+--
