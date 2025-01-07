@@ -1,4 +1,5 @@
 SELECT * FROM CONSINCO.MAD_CRITICAPEDCONFIG FOR UPDATE; -- Cod Critica adicionadas aqui
+-- Inserir select em MADV_CRITICAPEDVENDA
 
 -- Giuliano em 02/01/25 -- Solic Neides Ticket 508168
 -- Funcao NAGF_BUSCAULTENT_ATIVO valida a ultima entrada e retorna o CGO correto
