@@ -11,16 +11,16 @@ SELECT DISTINCT (X.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
                 0   AS SEQAUXNFITEM,
                'B' AS BLOQAUTOR,
                 85  AS CODINCONSISTENC,
-               'CGO incorreto na operação, para lançamento desta devolução utilize o CGO: '||DECODE(X.CODGERALOPER, 55, 74, 74, 55)||'.' MSG
-               
-    FROM MLF_AUXNOTAFISCAL X 
+               'CGO incorreto na operação, para lançamento desta devolução utilize o CGO: '||DECODE(X.CODGERALOPER, '55', '74 ou 79', '74', '55')||'.' MSG
+
+    FROM MLF_AUXNOTAFISCAL X
   WHERE 1=1
-    AND X.CODGERALOPER IN (55,74)
+    AND X.CODGERALOPER IN (55,74,79) -- Adicionado CGO 79 - Ticket 516610 em 14/01/25 - Giuliano Solic Danielle
     AND X.DTAEMISSAO > SYSDATE - 30
     AND X.SEQNFREF IS NOT NULL
-    
-    AND EXISTS (SELECT 1 FROM MLF_NOTAFISCAL Z 
+
+    AND EXISTS (SELECT 1 FROM MLF_NOTAFISCAL Z
                         WHERE Z.SEQNF = X.SEQNFREF
                           AND Z.CODGERALOPER IN (29,32,51)
-                          AND (X.CODGERALOPER = 74 AND Z.CODGERALOPER IN (51) OR
-                               X.CODGERALOPER = 55 AND Z.CODGERALOPER IN (29,32)))  
+                          AND (X.CODGERALOPER IN (74,79) AND Z.CODGERALOPER IN (51) OR
+                               X.CODGERALOPER = 55 AND Z.CODGERALOPER IN (29,32)))
