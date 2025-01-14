@@ -1,3 +1,4 @@
+-- Alteração na CONSINCO.MLFV_AUXNOTAFISCALINCONS
 -- Ticket 508798 - Adicionado por Giuliano em 07/01/2025
 -- Validação de entrada de devolução de NF do grupo - CGOs 54 e 55 (Razao dif e mesma razao):
 
