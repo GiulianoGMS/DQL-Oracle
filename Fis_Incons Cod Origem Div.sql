@@ -23,12 +23,13 @@ SELECT /*+OPTIMIZER_FEATURES_ENABLE('11.2.0.4')*/
 
 -- Alterado em 25/06/24 por Giuliano - Ticket 417539 - Barrar todas divergencias
 
-WHERE NVL(L.M014_DM_ORIG_ICMS,1) != NVL(D.CODORIGEMTRIB,2)
+WHERE A.CODGERALOPER != 652 -- Ticket 528038 31/01/2025
+  AND NVL(L.M014_DM_ORIG_ICMS,1) != NVL(D.CODORIGEMTRIB,2)
   AND A.SEQPESSOA > 999
 -- Ticket 512625 - 5 x 0 = X x X = Passa
 -- Minha logica: Se o DECODE do XML retornar X e o DECODE da C5 Também, não vai barrar
-  AND DECODE(NVL(L.M014_DM_ORIG_ICMS,1), 5, 'X', 0, 'X', 1) 
-  !=  DECODE(NVL(D.CODORIGEMTRIB,2)    , 5, 'X', 0, 'X', 2) 
+  AND DECODE(NVL(L.M014_DM_ORIG_ICMS,1), 5, 'X', 0, 'X', 1)
+  !=  DECODE(NVL(D.CODORIGEMTRIB,2)    , 5, 'X', 0, 'X', 2)
 --
   AND A.DTAEMISSAO > SYSDATE - 50
 --
