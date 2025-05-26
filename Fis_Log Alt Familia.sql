@@ -40,90 +40,70 @@ SELECT PLU,
                             C.VLRANTERIOR
                          END) NROTRIBUTACAO_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'NROTRIBUTACAO' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'NROTRIBUTACAO' THEN C.VLRATUAL
                          END) NROTRIBUTACAO_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'CODNBMSH' THEN
                             C.VLRANTERIOR
                          END) NCM_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'CODNBMSH' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'CODNBMSH' THEN C.VLRATUAL
                          END) NCM_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'CODCEST' THEN
                             C.VLRANTERIOR
                          END) CODCEST_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'CODCEST' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'CODCEST' THEN C.VLRATUAL
                          END) CODCEST_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'FINALIDADEFAMILIA' THEN
                             C.VLRANTERIOR
                          END) FINALIDADEFAMILIA_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'FINALIDADEFAMILIA' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'FINALIDADEFAMILIA' THEN C.VLRATUAL
                          END) FINALIDADEFAMILIA_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'ALIQUOTAIPI' THEN
                             C.VLRANTERIOR
                          END) ALIQUOTAIPI_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'ALIQUOTAIPI' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'ALIQUOTAIPI' THEN C.VLRATUAL
                          END) ALIQUOTAIPI_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'SITUACAONFPIS' THEN
                             C.VLRANTERIOR
                          END) CST_PIS_ENT_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'SITUACAONFPIS' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'SITUACAONFPIS' THEN C.VLRATUAL
                          END) CST_PIS_ENT_PIS_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'SITUACAONFPISSAI' THEN
                             C.VLRANTERIOR
                          END) CST_PIS_SAI_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'SITUACAONFPISSAI' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'SITUACAONFPISSAI' THEN C.VLRATUAL
                          END) CST_PIS_SAI_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'SITUACAONFCOFINS' THEN
                             C.VLRANTERIOR
                          END) CST_COFINS_ENT_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'SITUACAONFCOFINS' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'SITUACAONFCOFINS' THEN C.VLRATUAL
                          END) CST_COFINS_ENT_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'SITUACAONFCOFINSSAI' THEN
                             C.VLRANTERIOR
                          END) CST_COFINS_SAI_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'SITUACAONFCOFINSSAI' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'SITUACAONFCOFINSSAI' THEN C.VLRATUAL
                          END) CST_COFINS_SAI_NOVO,
                          MAX(CASE
                            WHEN CAMPO = 'CODORIGEMTRIB' THEN
                             C.VLRANTERIOR
                          END) CODORIGEM_ANTERIOR,
                          MAX(CASE
-                           WHEN CAMPO = 'CODORIGEMTRIB' THEN
-                            NVL(REGEXP_SUBSTR(C.VLRATUAL, '(\S*)(\s)'),
-                                B.CODORIGEMTRIB)
+                           WHEN CAMPO = 'CODORIGEMTRIB' THEN C.VLRATUAL
                          END) CODORIGEM_NOVO
         
           FROM MAP_PRODUTO A
@@ -134,7 +114,7 @@ SELECT PLU,
                AND C.TABELA LIKE 'MAP_FAM%'
         
          WHERE 1=1
-               AND C.DTAAUDITORIA BETWEEN :DT1 AND :DT2
+               AND C.DTAAUDITORIA BETWEEN SYSDATE - 7 AND SYSDATE
                AND CAMPO IN ('CODCEST',
                              'CODNBMSH',
                              'SITUACAONFPIS',
