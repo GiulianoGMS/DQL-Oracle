@@ -1,0 +1,23 @@
+-- Adicionar crítica em MLFV_AUXNOTAFISCALINCONS
+-- Ticket 644730
+-- Adicionado por Giuliano em 27/10/2025
+-- Barra CST 060, fornec Distrib CFOP diferente de 5405
+
+SELECT  /*+OPTIMIZER_FEATURES_ENABLE('11.2.0.4') */
+          DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
+          A.NUMERONF,
+          A.NROEMPRESA, A.SEQPESSOA,
+          B.SEQAUXNFITEM AS SEQAUXNFITEM,
+          'B' AS BLOQAUTOR,
+          68 AS CODINCONSISTENC,
+          'Produto: '||B.SEQPRODUTO||' - CST XML ('||B.SITUACAONF||') Divergente do CFOP XML ('||M014_CD_CFOP||')- Entre em contato com o Departamento Fiscal' MENSAGEM
+  FROM CONSINCO.MLF_AUXNOTAFISCAL A INNER JOIN CONSINCO.MLF_AUXNFITEM B ON A.SEQAUXNOTAFISCAL = B.SEQAUXNOTAFISCAL
+                                    INNER JOIN NAGV_FORNTIPO F ON (F.SEQFORNECEDOR = A.SEQPESSOA) --- VIEW TIPO FORNECEDOR
+                                    INNER JOIN TMP_M000_NF K ON (K.M000_NR_CHAVE_ACESSO = A.NFECHAVEACESSO)
+                                    INNER JOIN TMP_M014_ITEM L ON (L.M000_ID_NF = K.M000_ID_NF AND L.M014_NR_ITEM = B.SEQITEMNFXML)
+
+ WHERE M014_CD_CFOP NOT IN (5405) 
+   AND A.CODGERALOPER = 1
+    -- De/Para na Function fc5_RetIndSituacaoNF_NFe - Regra Barra CST 60 na clausula
+   AND L.M014_DM_TRIB_ICMS IN (8)
+   AND F.TIPO = 'D'
