@@ -1,0 +1,206 @@
+SELECT MAX_EMPRESA.FANTASIA LJ, MAP_PRODUTO.SEQPRODUTO PLU, MAP_PRODUTO.DESCCOMPLETA, 
+       TO_CHAR(MRL_CUSTOVERBA.DTAINICIAL, 'DD/MM/YYYY') DTAINICIAL,
+       TO_CHAR(MRL_CUSTOVERBA.DTAFINAL, 'DD/MM/YYYY')  DTAFINAL,
+       DECODE(NVL(PCTUNITVERBA, 0),
+              0,
+              VLRUNITVERBA + NVL(VLRUNITPISCOFINS, 0),
+              0) SELLOUT,
+       CASE
+              WHEN NVL(MRL_CUSTOVERBA.INDSFAMILIA, 'N') = 'S' THEN
+               (SELECT NVL(SUM(C.QTDUTILIZADAVERBA), 0)
+                  FROM MRL_LECUSTOVERBA C, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTEFAMILIA = MRL_CUSTOVERBA.SEQLOTEFAMILIA
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND C.SEQLOTE = X.SEQLOTE
+                       AND C.NROEMPRESA = X.NROEMPRESA
+                       AND C.CENTRALLOJA = X.CENTRALLOJA
+                       AND C.SEQVERBA = X.SEQVERBA
+                       AND C.SEQPRODUTO = X.SEQPRODUTO) +
+               (SELECT NVL(SUM(D.QTDUTILIZADAVERBA), 0)
+                  FROM MAD_PEDVENDAVERBA D, MAD_PEDVENDA E, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTEFAMILIA = MRL_CUSTOVERBA.SEQLOTEFAMILIA
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND D.NROPEDVENDA = E.NROPEDVENDA
+                       AND D.NROEMPRESA = E.NROEMPRESA
+                       AND D.SEQLOTE = X.SEQLOTE
+                       AND D.NROEMPRESA = X.NROEMPRESA
+                       AND D.CENTRALLOJA = X.CENTRALLOJA
+                       AND D.SEQVERBA = X.SEQVERBA
+                       AND D.SEQPRODUTO = X.SEQPRODUTO)
+              WHEN NVL(MRL_CUSTOVERBA.INDSGRUPOPROD, 'N') = 'S' THEN
+               (SELECT NVL(SUM(C.QTDUTILIZADAVERBA), 0)
+                  FROM MRL_LECUSTOVERBA C, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTE = MRL_CUSTOVERBA.SEQLOTE
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND C.SEQLOTE = X.SEQLOTE
+                       AND C.NROEMPRESA = X.NROEMPRESA
+                       AND C.CENTRALLOJA = X.CENTRALLOJA
+                       AND C.SEQVERBA = X.SEQVERBA
+                       AND C.SEQPRODUTO = X.SEQPRODUTO) +
+               (SELECT NVL(SUM(D.QTDUTILIZADAVERBA), 0)
+                  FROM MAD_PEDVENDAVERBA D, MAD_PEDVENDA E, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTE = MRL_CUSTOVERBA.SEQLOTE
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND D.NROPEDVENDA = E.NROPEDVENDA
+                       AND D.NROEMPRESA = E.NROEMPRESA
+                       AND D.SEQLOTE = X.SEQLOTE
+                       AND D.NROEMPRESA = X.NROEMPRESA
+                       AND D.CENTRALLOJA = X.CENTRALLOJA
+                       AND D.SEQVERBA = X.SEQVERBA
+                       AND D.SEQPRODUTO = X.SEQPRODUTO)
+              ELSE
+               (SELECT NVL(SUM(C.QTDUTILIZADAVERBA), 0)
+                  FROM MRL_LECUSTOVERBA C
+                 WHERE C.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO
+                       AND C.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND C.CENTRALLOJA = MRL_CUSTOVERBA.CENTRALLOJA
+                       AND C.SEQVERBA = MRL_CUSTOVERBA.SEQVERBA) +
+               (SELECT NVL(SUM(D.QTDUTILIZADAVERBA), 0)
+                  FROM MAD_PEDVENDAVERBA D, MAD_PEDVENDA E
+                 WHERE D.NROPEDVENDA = E.NROPEDVENDA
+                       AND D.NROEMPRESA = E.NROEMPRESA
+                       AND D.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO
+                       AND D.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND D.CENTRALLOJA = MRL_CUSTOVERBA.CENTRALLOJA
+                       AND D.SEQVERBA = MRL_CUSTOVERBA.SEQVERBA)
+       END  QUANT,
+       CASE
+              WHEN NVL(MRL_CUSTOVERBA.INDSFAMILIA, 'N') = 'S' THEN
+               (SELECT NVL(SUM(DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                                      0,
+                                      C.QTDUTILIZADAVERBA,
+                                      C.VLRAPURVERBAPCT)),
+                           0)
+                  FROM MRL_LECUSTOVERBA C, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTEFAMILIA = MRL_CUSTOVERBA.SEQLOTEFAMILIA
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND C.SEQLOTE = X.SEQLOTE
+                       AND C.NROEMPRESA = X.NROEMPRESA
+                       AND C.CENTRALLOJA = X.CENTRALLOJA
+                       AND C.SEQVERBA = X.SEQVERBA
+                       AND C.SEQPRODUTO = X.SEQPRODUTO) +
+               (SELECT NVL(SUM(DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                                      0,
+                                      D.QTDUTILIZADAVERBA,
+                                      D.VLRAPURVERBAPCT)),
+                           0)
+                  FROM MAD_PEDVENDAVERBA D, MAD_PEDVENDA E, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTEFAMILIA = MRL_CUSTOVERBA.SEQLOTEFAMILIA
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND D.NROPEDVENDA = E.NROPEDVENDA
+                       AND D.NROEMPRESA = E.NROEMPRESA
+                       AND D.SEQLOTE = X.SEQLOTE
+                       AND D.NROEMPRESA = X.NROEMPRESA
+                       AND D.CENTRALLOJA = X.CENTRALLOJA
+                       AND D.SEQVERBA = X.SEQVERBA
+                       AND D.SEQPRODUTO = X.SEQPRODUTO)
+              WHEN NVL(MRL_CUSTOVERBA.INDSGRUPOPROD, 'N') = 'S' THEN
+               (SELECT NVL(SUM(DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                                      0,
+                                      C.QTDUTILIZADAVERBA,
+                                      C.VLRAPURVERBAPCT)),
+                           0)
+                  FROM MRL_LECUSTOVERBA C, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTE = MRL_CUSTOVERBA.SEQLOTE
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND C.SEQLOTE = X.SEQLOTE
+                       AND C.NROEMPRESA = X.NROEMPRESA
+                       AND C.CENTRALLOJA = X.CENTRALLOJA
+                       AND C.SEQVERBA = X.SEQVERBA
+                       AND C.SEQPRODUTO = X.SEQPRODUTO) +
+               (SELECT NVL(SUM(DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                                      0,
+                                      D.QTDUTILIZADAVERBA,
+                                      D.VLRAPURVERBAPCT)),
+                           0)
+                  FROM MAD_PEDVENDAVERBA D, MAD_PEDVENDA E, MRL_CUSTOVERBA X
+                 WHERE X.SEQLOTE = MRL_CUSTOVERBA.SEQLOTE
+                       AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND D.NROPEDVENDA = E.NROPEDVENDA
+                       AND D.NROEMPRESA = E.NROEMPRESA
+                       AND D.SEQLOTE = X.SEQLOTE
+                       AND D.NROEMPRESA = X.NROEMPRESA
+                       AND D.CENTRALLOJA = X.CENTRALLOJA
+                       AND D.SEQVERBA = X.SEQVERBA
+                       AND D.SEQPRODUTO = X.SEQPRODUTO)
+              ELSE
+               (SELECT NVL(SUM(DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                                      0,
+                                      C.QTDUTILIZADAVERBA,
+                                      C.VLRAPURVERBAPCT)),
+                           0)
+                  FROM MRL_LECUSTOVERBA C
+                 WHERE C.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO
+                       AND C.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND C.CENTRALLOJA = MRL_CUSTOVERBA.CENTRALLOJA
+                       AND C.SEQVERBA = MRL_CUSTOVERBA.SEQVERBA) +
+               (SELECT NVL(SUM(DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                                      0,
+                                      D.QTDUTILIZADAVERBA,
+                                      D.VLRAPURVERBAPCT)),
+                           0)
+                  FROM MAD_PEDVENDAVERBA D, MAD_PEDVENDA E
+                 WHERE D.NROPEDVENDA = E.NROPEDVENDA
+                       AND D.NROEMPRESA = E.NROEMPRESA
+                       AND D.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO
+                       AND D.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                       AND D.CENTRALLOJA = MRL_CUSTOVERBA.CENTRALLOJA
+                       AND D.SEQVERBA = MRL_CUSTOVERBA.SEQVERBA)
+       END * (DECODE(NVL(MRL_CUSTOVERBA.PCTUNITVERBA, 0),
+                     0,
+                     MRL_CUSTOVERBA.VLRUNITVERBA +
+                     NVL(MRL_CUSTOVERBA.VLRUNITPISCOFINS, 0),
+                     1)) VLR_TOTAL_VERBA
+                     
+  FROM MRL_CUSTOVERBA,
+       MAP_PRODUTO,
+       MAP_FAMEMBALAGEM,
+       MAX_EMPRESA,
+       GE_PESSOA,
+       MAX_COMPRADOR,
+       MAP_FAMILIA
+
+ WHERE MAP_PRODUTO.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO
+       AND MAP_FAMEMBALAGEM.SEQFAMILIA = MAP_PRODUTO.SEQFAMILIA
+       AND MAP_FAMEMBALAGEM.QTDEMBALAGEM = MRL_CUSTOVERBA.QTDEMBALAGEM
+       AND MAX_EMPRESA.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+       AND GE_PESSOA.SEQPESSOA = MRL_CUSTOVERBA.SEQFORNECEDOR
+       AND MAX_COMPRADOR.SEQCOMPRADOR = MRL_CUSTOVERBA.SEQCOMPRADOR
+       AND MAP_FAMILIA.SEQFAMILIA = MAP_PRODUTO.SEQFAMILIA
+       AND MRL_CUSTOVERBA.NROACORDO IS NULL
+       AND MRL_CUSTOVERBA.NROEMPRESAACORDO IS NULL
+       AND MRL_CUSTOVERBA.INDVERBASEMACORDO = 'S'
+       AND NVL(MRL_CUSTOVERBA.INDVERBAAPURADA, 'N') IN ('N', 'P')
+      
+       AND
+       (MRL_CUSTOVERBA.STATUSVERBA = 'A' OR (MRL_CUSTOVERBA.STATUSVERBA = 'I' AND
+       MRL_CUSTOVERBA.QTDUTILIZADAVERBA > 0 AND
+       MRL_CUSTOVERBA.NROACORDO IS NULL))
+       AND (MRL_CUSTOVERBA.ORIGEMVERBA NOT IN ('R', 'D', 'T') OR
+       MRL_CUSTOVERBA.ORIGEMVERBA IS NULL)
+       AND MRL_CUSTOVERBA.SEQPRODUTO IN
+       (CASE WHEN NVL(MRL_CUSTOVERBA.INDSFAMILIA, 'N') = 'S' THEN
+            (SELECT NVL(MAX(X.SEQPRODUTO), 0)
+               FROM MRL_CUSTOVERBA X
+              WHERE X.SEQLOTEFAMILIA = MRL_CUSTOVERBA.SEQLOTEFAMILIA
+                    AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                    AND ((:NR1 IS NULL) OR
+                    (:NR1 IS NOT NULL AND
+                    X.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO))) WHEN
+            NVL(MRL_CUSTOVERBA.INDSGRUPOPROD, 'N') = 'S' THEN
+            (SELECT NVL(MAX(X.SEQPRODUTO), 0)
+               FROM MRL_CUSTOVERBA X
+              WHERE X.SEQLOTE = MRL_CUSTOVERBA.SEQLOTE
+                    AND X.NROEMPRESA = MRL_CUSTOVERBA.NROEMPRESA
+                    AND ((:NR1 IS NULL) OR
+                    (:NR1 IS NOT NULL AND
+                    X.SEQPRODUTO = MRL_CUSTOVERBA.SEQPRODUTO))) ELSE
+            MRL_CUSTOVERBA.SEQPRODUTO END)
+      
+       AND MRL_CUSTOVERBA.SEQFORNECEDOR = :NR1
+       AND MRL_CUSTOVERBA.SEQCOMPRADOR IN (SELECT SEQCOMPRADOR FROM MAX_COMPRADOR CC WHERE CC.COMPRADOR IN (#LS1))
+       AND MRL_CUSTOVERBA.DTAFINAL BETWEEN :DT1 AND :DT2
+
+ ORDER BY MRL_CUSTOVERBA.SEQFORNECEDOR,
+          MRL_CUSTOVERBA.NROEMPRESA,
+          MAP_PRODUTO.DESCCOMPLETA
