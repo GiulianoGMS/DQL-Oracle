@@ -1,7 +1,3 @@
--- XLS em https://github.com/GiulianoGMS/Excel-Files/blob/main/Rel_Aux_ImportacaoDireta.xlsx
-
-ALTER SESSION SET CURRENT_SCHEMA = CONSINCO;
-
 SELECT A.SEQPEDIDOIMPORT NRO_PED,
        A.SEQPRODUTO PLU,
        C.CODACESSO REF,
@@ -26,8 +22,8 @@ SELECT A.SEQPEDIDOIMPORT NRO_PED,
        A.VLRDESPESAFORA,
        A.VLRFCPICMS,
        A.VLRFCPST,
-       T.PERPISDIF,
-       T.PERCOFINSDIF,
+       T.PERPISDIF + NVL(T.PERMAJORACAOPISIMPORT,0),
+       T.PERCOFINSDIF + NVL(T.PERMAJORACAOCOFINSIMPORT,0),
        T.PERALIQUOTA / 100 * T.PERTRIBUTADO ALIQICMS
        
   FROM MAD_PIPEDIMPORTPROD A INNER JOIN MAP_PRODUTO B      ON A.SEQPRODUTO = B.SEQPRODUTO
@@ -41,7 +37,6 @@ SELECT A.SEQPEDIDOIMPORT NRO_PED,
                                                                                                 AND T.UFCLIENTEFORNEC = 'EX' 
                                                                                                 AND T.TIPTRIBUTACAO = 'EI'
  WHERE 1 = 1
-   AND A.SEQPEDIDOIMPORT = '1664'
+   AND A.SEQPEDIDOIMPORT = '4101'
    
 ORDER BY 10 DESC
-
