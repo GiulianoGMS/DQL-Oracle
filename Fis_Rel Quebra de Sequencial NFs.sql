@@ -1,4 +1,10 @@
-SELECT * FROM (WITH FUROS AS
+-- QRP em https://github.com/GiulianoGMS/QRPs/blob/main/RelQuebraSeq.QRP
+
+SELECT X.*, TO_CHAR(:DT1, 'DD/MM/YYYY')||' Até '||TO_CHAR(:DT2, 'DD/MM/YYYY') PERIODO, CASE WHEN LENGTH('#LS1') > 10 THEN 'Todas' ELSE '#LS1' END FILTRO_EMP
+
+FROM 
+
+(WITH FUROS AS
  (SELECT NROEMPRESA, SERIE, NUM_ANT + 1 AS INICIO_FURO, NUMERO - 1 AS FIM_FURO
     FROM (SELECT NROEMPRESA,
                  SERIE,
@@ -7,19 +13,17 @@ SELECT * FROM (WITH FUROS AS
             FROM (SELECT NROEMPRESA, A.SERIENF AS SERIE, NUMERONF AS NUMERO
                     FROM MLF_NOTAFISCAL A
                     JOIN MAX_CODGERALOPER C ON C.CODGERALOPER = A.CODGERALOPER
-                   WHERE A.DTAEMISSAO BETWEEN TRUNC(SYSDATE - 30) AND
-                         TRUNC(SYSDATE)
+                   WHERE A.DTAEMISSAO BETWEEN :DT1 AND :DT2
                          AND A.MODELONF <> 65
                          AND C.TIPUSO = 'E'
-AND A.SERIENF != 'NFS'
+                         AND A.SERIENF != 'NFS'
                          AND NROEMPRESA IN (#LS1)
                   
                   UNION ALL
                   
                   SELECT NROEMPRESA, SERIEDF, NUMERODF
                     FROM MFL_DOCTOFISCAL
-                   WHERE DTAMOVIMENTO BETWEEN TRUNC(SYSDATE - 30) AND
-                         TRUNC(SYSDATE)
+                   WHERE DTAMOVIMENTO BETWEEN :DT1 AND :DT2
                          AND NROEMPRESA IN (#LS1)
                          AND MODELODF != '65'))
    WHERE NUMERO - NUM_ANT > 1)
@@ -33,6 +37,6 @@ CONNECT BY LEVEL <= (F.FIM_FURO - F.INICIO_FURO + 1)
 
 UNION ALL
 
-SELECT DECODE('#LS1', NULL,'Todas', #LS1) NROEMPRESA, NULL SERIE, 'SEM FUROS' NF_FALTANTE
+SELECT CASE WHEN LENGTH('#LS1') > 10 THEN 'Todas' ELSE '#LS1' END  NROEMPRESA, NULL SERIE, 'Sem Furos!' NF_FALTANTE
   FROM DUAL
- WHERE NOT EXISTS (SELECT 1 FROM FUROS))
+ WHERE NOT EXISTS (SELECT 1 FROM FUROS)) X
