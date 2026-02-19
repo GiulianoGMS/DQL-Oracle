@@ -1,0 +1,16 @@
+-- Ticket 692306
+-- Giuliano 19/02/26
+
+SELECT  /*+OPTIMIZER_FEATURES_ENABLE('11.2.0.4') */
+          DISTINCT (A.SEQAUXNOTAFISCAL) AS SEQAUXNOTAFISCAL,
+          A.NUMERONF,
+          A.NROEMPRESA,
+          0 AS SEQAUXNFITEM,
+          'L' AS BLOQAUTOR,
+          100 AS CODINCONSISTENC,
+          'O campo Indicador de Operacao na nota de ver 1-Cons. Final - Atual no XML: 0-Normal. Solicite a troca da nota' MENSAGEM
+  FROM CONSINCO.MLF_AUXNOTAFISCAL A INNER JOIN TMP_M000_NF K ON (K.M000_NR_CHAVE_ACESSO = A.NFECHAVEACESSO)
+
+ WHERE 1=1 
+   AND A.CODGERALOPER = 2 
+   AND M000_INDFINAL = 0
