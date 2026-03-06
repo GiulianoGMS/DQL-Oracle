@@ -122,7 +122,7 @@ FROM (
                 END
                ) VLR,
 
-               SUM(NVL(VLRICMS,0)) ICMS,
+               SUM(NVL(VLRICMS,0) + NVL(VLRICMSSTDISTRIB,0)) ICMS,
                SUM(NVL(b.VLRPIS,0)) PIS,
                SUM(NVL(b.VLRCOFINS,0)) COFINS,
                SUM(NVL(b.VLRIMPOSTOCBS,0)) CBS,
@@ -205,7 +205,7 @@ FROM (
                      else b.vlritem + nvl(b.vlracrescimo, 0) - nvl(b.vlrdesconto, 0)- round(nvl(0, 0), 2)
                      end
                    ) vlr,
-               SUM(NVL(VLRICMS,0)) ICMS,
+               SUM(NVL(VLRICMS,0) + NVL(VLRICMSSTDISTRIB,0)) ICMS,
                SUM(NVL(VLRPIS,0)) PIS,
                SUM(NVL(VLRCOFINS,0)) COFINS,
                SUM(NVL(VLRIMPOSTOCBS,0)) CBS,
