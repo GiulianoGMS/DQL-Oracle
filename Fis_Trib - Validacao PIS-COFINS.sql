@@ -1,0 +1,38 @@
+SELECT DISTINCT 
+       T.NROTRIBUTACAO, 
+       T.TRIBUTACAO DESC_TRIBUTACAO,
+       
+       RTRIM(
+           CASE WHEN X.PERPISDIF != 0 
+                THEN 'Aliquota Dif PIS = '||TO_CHAR(X.PERPISDIF,'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''') ||' | ' 
+           END ||
+           
+           CASE WHEN X.PERCOFINSDIF != 0 
+                THEN 'Aliquota Dif COFINS = '||TO_CHAR(X.PERCOFINSDIF,'FM999G999G990D90', 'NLS_NUMERIC_CHARACTERS='',.''')||' | ' 
+           END ||
+           
+           CASE WHEN X.SITUACAONFPIS != 0 
+                THEN 'Situacao Tributária de PIS diferente de zero! ('||X.SITUACAONFPIS||') | ' 
+           END ||
+           
+           CASE WHEN X.SITUACAONFCOFINS != 0 
+                THEN 'Situacao Tributária de COFINS diferente de zero! '||X.SITUACAONFCOFINS||') | ' 
+           END
+       , ' | ') AS CRITICA
+
+FROM MAP_TRIBUTACAOUF X INNER JOIN MAP_TRIBUTACAO T ON T.NROTRIBUTACAO = X.NROTRIBUTACAO
+
+WHERE (X.PERPISDIF = 0 
+    OR X.PERCOFINSDIF = 0
+    OR X.SITUACAONFPIS != 0
+    OR X.SITUACAONFCOFINS != 0)
+
+  AND X.NROREGTRIBUTACAO = 0
+
+  AND (
+        X.UFEMPRESA = 'SP' AND UFCLIENTEFORNEC IN ('SP','RJ') AND TIPTRIBUTACAO = 'SC'
+     OR X.UFEMPRESA = 'SP' AND UFCLIENTEFORNEC = 'SP' AND TIPTRIBUTACAO = 'SN'
+     OR X.UFEMPRESA = 'RJ' AND UFCLIENTEFORNEC IN ('SP','RJ') AND TIPTRIBUTACAO = 'SC'
+     OR X.UFEMPRESA = 'RJ' AND UFCLIENTEFORNEC = 'RJ' AND TIPTRIBUTACAO = 'SN'
+      )
+ORDER BY 1
